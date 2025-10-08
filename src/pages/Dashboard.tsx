@@ -24,9 +24,12 @@ export default function Dashboard() {
             <h1 className="text-2xl font-bold text-foreground">{user.name}</h1>
             <p className="text-sm text-muted-foreground">{user.role}</p>
           </div>
-          <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+          <button 
+            onClick={() => window.location.href = '/profile'}
+            className="w-12 h-12 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-smooth"
+          >
             <i className="fi fi-ts-user text-xl text-foreground"></i>
-          </div>
+          </button>
         </div>
       </header>
 

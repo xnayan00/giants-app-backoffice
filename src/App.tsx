@@ -9,8 +9,14 @@ import Dashboard from "./pages/Dashboard";
 import Eventos from "./pages/Eventos";
 import Palestras from "./pages/Palestras";
 import Network from "./pages/Network";
-import Backoffice from "./pages/Backoffice";
+import Profile from "./pages/Profile";
+import BackofficeLogin from "./pages/BackofficeLogin";
+import BackofficeDashboard from "./pages/BackofficeDashboard";
+import BackofficeUsuarios from "./pages/BackofficeUsuarios";
+import BackofficeEventos from "./pages/BackofficeEventos";
+import BackofficeLogs from "./pages/BackofficeLogs";
 import NotFound from "./pages/NotFound";
+import { BackofficeLayout } from "./components/BackofficeLayout";
 
 const queryClient = new QueryClient();
 
@@ -48,9 +54,35 @@ const App = () => (
               <Network />
             </MobileDetector>
           } />
+          <Route path="/profile" element={
+            <MobileDetector>
+              <Profile />
+            </MobileDetector>
+          } />
           
-          {/* Desktop Route - Backoffice */}
-          <Route path="/backoffice" element={<Backoffice />} />
+          {/* Backoffice Routes */}
+          <Route path="/backoffice/login" element={<BackofficeLogin />} />
+          <Route path="/backoffice/dashboard" element={
+            <BackofficeLayout>
+              <BackofficeDashboard />
+            </BackofficeLayout>
+          } />
+          <Route path="/backoffice/usuarios" element={
+            <BackofficeLayout>
+              <BackofficeUsuarios />
+            </BackofficeLayout>
+          } />
+          <Route path="/backoffice/eventos" element={
+            <BackofficeLayout>
+              <BackofficeEventos />
+            </BackofficeLayout>
+          } />
+          <Route path="/backoffice/logs" element={
+            <BackofficeLayout>
+              <BackofficeLogs />
+            </BackofficeLayout>
+          } />
+          <Route path="/backoffice" element={<Navigate to="/backoffice/login" replace />} />
           
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
