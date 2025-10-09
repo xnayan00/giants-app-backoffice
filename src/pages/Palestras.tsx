@@ -1,90 +1,120 @@
 import { AppBar } from '@/components/AppBar';
 
 export default function Palestras() {
-  const palestras = [
+  const categories = [
     {
-      id: 1,
-      title: 'O Futuro da Tecnologia',
-      speaker: 'Dr. Carlos Mendes',
-      duration: '45 min',
-      category: 'Tecnologia',
-      thumbnail: '🚀',
+      name: 'DESENVOLVOVLIMENTO PESSOAL & MENTALIDADE',
+      palestras: [
+        {
+          id: 1,
+          speaker: 'PAULO MUZY',
+          title: 'MODELOS MENTAIS',
+          thumbnail: '👨‍⚕️',
+        },
+        {
+          id: 2,
+          speaker: 'LINCOLN NUNES',
+          title: 'MENTALIDADE EXPONENCIAL: SUPERANDO OS...',
+          thumbnail: '👨‍💼',
+        },
+        {
+          id: 3,
+          speaker: 'JOÃO MARTINS',
+          title: 'CONFIANÇA E INTELIGÊNCIA HUMANA',
+          thumbnail: '👨‍🏫',
+        },
+      ],
     },
     {
-      id: 2,
-      title: 'Liderança na Era Digital',
-      speaker: 'Ana Paula Santos',
-      duration: '60 min',
-      category: 'Liderança',
-      thumbnail: '👥',
+      name: 'FINANCEIRO & EXPANSÃO',
+      palestras: [
+        {
+          id: 4,
+          speaker: 'RODOLFO OLIVEIRA',
+          title: 'APRENDA A JOGAR COM O CAPITALISMO A SEU FAVOR',
+          thumbnail: '👨‍💻',
+        },
+        {
+          id: 5,
+          speaker: 'RODOLFO OLIVEIRA',
+          title: 'COMO FICAR RICO NO JOGO DO CAPITALISMO?',
+          thumbnail: '👨‍💻',
+        },
+      ],
     },
     {
-      id: 3,
-      title: 'Inovação e Startups',
-      speaker: 'Roberto Lima',
-      duration: '50 min',
-      category: 'Negócios',
-      thumbnail: '💡',
-    },
-    {
-      id: 4,
-      title: 'Marketing Digital Avançado',
-      speaker: 'Marina Costa',
-      duration: '40 min',
-      category: 'Marketing',
-      thumbnail: '📱',
+      name: 'GESTÃO EMPRESARIAL & ESTRATÉGIA',
+      palestras: [
+        {
+          id: 6,
+          speaker: 'RAUL SENA',
+          title: 'REINVENTE AGORA',
+          thumbnail: '👨‍💼',
+        },
+        {
+          id: 7,
+          speaker: 'RENATA VICHI',
+          title: 'ESTRATÉGIA E CRM',
+          thumbnail: '👩‍💼',
+        },
+        {
+          id: 8,
+          speaker: 'TIAGO DIAS',
+          title: 'MINDSET EMPREENDEDOR',
+          thumbnail: '👨‍💼',
+        },
+      ],
     },
   ];
 
   return (
     <div className="app-container">
       {/* Header */}
-      <header className="bg-surface-elevated border-b border-border p-6">
-        <h1 className="text-2xl font-bold text-foreground">Palestras</h1>
-        <p className="text-sm text-muted-foreground mt-1">Conteúdo exclusivo e inspirador</p>
+      <header className="bg-surface-elevated border-b border-border p-6 space-y-3">
+        <h1 className="text-2xl font-bold text-foreground text-center">Palestras</h1>
+        <p className="text-lg text-center text-foreground/90 leading-relaxed px-4">
+          Não se preocupe com as falhas, você só precisa acertar uma vez.
+        </p>
       </header>
 
-      {/* Palestras List */}
-      <main className="p-6 space-y-4 animate-fade-in">
-        {palestras.map((palestra, index) => (
-          <div
-            key={palestra.id}
-            className="card-elevated overflow-hidden transition-smooth hover:scale-[1.02]"
-            style={{ animationDelay: `${index * 0.1}s` }}
-          >
-            <div className="flex gap-4 p-5">
-              {/* Thumbnail */}
-              <div className="w-20 h-20 flex-shrink-0 bg-surface rounded-xl flex items-center justify-center text-4xl">
-                {palestra.thumbnail}
-              </div>
+      {/* Categories and Lectures */}
+      <main className="p-6 pb-24 space-y-8 animate-fade-in">
+        {categories.map((category, categoryIndex) => (
+          <section key={categoryIndex} className="space-y-4">
+            {/* Category Title */}
+            <h2 className="text-sm font-bold text-foreground/80 tracking-wide">
+              {category.name}
+            </h2>
 
-              {/* Content */}
-              <div className="flex-1 space-y-2">
-                <div>
-                  <h3 className="text-base font-semibold text-foreground line-clamp-1">
-                    {palestra.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">{palestra.speaker}</p>
+            {/* Horizontal Scroll Container */}
+            <div className="flex gap-4 overflow-x-auto pb-2 -mx-6 px-6 scrollbar-hide">
+              {category.palestras.map((palestra, index) => (
+                <div
+                  key={palestra.id}
+                  className="card-elevated overflow-hidden flex-shrink-0 w-[280px] transition-smooth hover:scale-[1.02]"
+                  style={{ animationDelay: `${(categoryIndex * 3 + index) * 0.1}s` }}
+                >
+                  {/* Lecture Card */}
+                  <div className="relative h-48 bg-gradient-to-br from-surface to-surface-elevated flex items-end p-6">
+                    <div className="absolute top-4 right-4 w-24 h-24 rounded-full bg-surface-hover border-2 border-border flex items-center justify-center text-4xl">
+                      {palestra.thumbnail}
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="text-xl font-bold text-foreground">
+                        {palestra.speaker}
+                      </h3>
+                    </div>
+                  </div>
+
+                  <div className="p-4">
+                    <h4 className="text-sm font-semibold text-foreground line-clamp-2 min-h-[40px]">
+                      {palestra.title}
+                    </h4>
+                  </div>
                 </div>
-
-                <div className="flex items-center gap-3">
-                  <span className="text-xs px-2 py-1 rounded-full bg-accent/20 text-accent font-medium">
-                    {palestra.category}
-                  </span>
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <i className="fi fi-ts-clock"></i>
-                    {palestra.duration}
-                  </span>
-                </div>
-              </div>
+              ))}
             </div>
-
-            <div className="px-5 pb-5">
-              <button className="w-full py-2.5 bg-primary text-primary-foreground rounded-lg font-medium transition-smooth hover:bg-primary/90">
-                Assistir Agora
-              </button>
-            </div>
-          </div>
+          </section>
         ))}
       </main>
 
