@@ -10,6 +10,7 @@ import Eventos from "./pages/Eventos";
 import Palestras from "./pages/Palestras";
 import Network from "./pages/Network";
 import Profile from "./pages/Profile";
+import Progresso from "./pages/Progresso";
 import BackofficeLogin from "./pages/BackofficeLogin";
 import BackofficeDashboard from "./pages/BackofficeDashboard";
 import BackofficeUsuarios from "./pages/BackofficeUsuarios";
@@ -57,6 +58,11 @@ const App = () => (
           <Route path="/profile" element={
             <MobileDetector>
               <Profile />
+            </MobileDetector>
+          } />
+          <Route path="/progresso" element={
+            <MobileDetector>
+              <Progresso />
             </MobileDetector>
           } />
           

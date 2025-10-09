@@ -1,7 +1,9 @@
 import { AppBar } from "@/components/AppBar"
+import { useNavigate } from "react-router-dom"
 import logoGiants from "@/assets/logo-horizontal-white.svg"
 
 export default function Dashboard() {
+	const navigate = useNavigate()
 	const user = {
 		name: "João Silva",
 		role: "Participante",
@@ -107,7 +109,10 @@ export default function Dashboard() {
 				{/* Quick Actions */}
 				<div className="space-y-3">
 					<div className="space-y-2">
-						<button className="w-full card-premium p-4 flex items-center justify-between transition-smooth hover:bg-surface-hover">
+						<button 
+							onClick={() => navigate("/network")}
+							className="w-full card-premium p-4 flex items-center justify-between transition-smooth hover:bg-surface-hover"
+						>
 							<div className="flex items-center gap-3">
 								<i className="fi fi-ts-network-analytic text-foreground text-lg"></i>
 								<div className="flex flex-col text-left">
@@ -122,7 +127,10 @@ export default function Dashboard() {
 							<i className="fi fi-ts-angle-right text-muted-foreground"></i>
 						</button>
 
-						<button className="w-full card-premium p-4 flex items-center justify-between transition-smooth hover:bg-surface-hover">
+						<button 
+							onClick={() => navigate("/progresso")}
+							className="w-full card-premium p-4 flex items-center justify-between transition-smooth hover:bg-surface-hover"
+						>
 							<div className="flex items-center gap-3">
 								<i className="fi fi-ts-bars-progress text-foreground text-lg"></i>
 								<div className="flex flex-col text-left">
