@@ -41,7 +41,7 @@ export default function Dashboard() {
 						<p className="text-sm text-muted-foreground">{user.role}</p>
 					</div> */}
 					<button
-						onClick={() => (window.location.href = "/profile")}
+						onClick={() => navigate("/profile")}
 						className="rounded-full flex items-center justify-center hover:bg-muted/80 transition-smooth"
 					>
 						<i className="fi fi-ts-circle-user flex aling-center justify-center text-4xl text-foreground"></i>
@@ -55,7 +55,7 @@ export default function Dashboard() {
 				<div className="card-elevated p-6 space-y-4">
 					<div className="flex items-center gap-3">
 						<div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-							<i className="fi fi-ts-calendar text-primary text-lg"></i>
+							<i className="fi fi-ts-calendar flex align-center justify-center text-primary text-lg"></i>
 						</div>
 						<div>
 							<p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
@@ -83,7 +83,7 @@ export default function Dashboard() {
 				<div className="grid grid-cols-2 gap-4">
 					<div className="card-premium p-6 space-y-2">
 						<div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-							<i className="fi fi-ts-diploma text-accent text-lg"></i>
+							<i className="fi fi-ts-diploma flex align-center justify-center text-accent text-lg"></i>
 						</div>
 						<div>
 							<p className="text-3xl font-bold text-foreground">
@@ -95,7 +95,7 @@ export default function Dashboard() {
 
 					<div className="card-premium p-6 space-y-2">
 						<div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-							<i className="fi fi-ts-handshake text-accent text-lg"></i>
+							<i className="fi fi-ts-handshake flex align-center justify-center text-accent text-lg"></i>
 						</div>
 						<div>
 							<p className="text-3xl font-bold text-foreground">
@@ -109,12 +109,12 @@ export default function Dashboard() {
 				{/* Quick Actions */}
 				<div className="space-y-3">
 					<div className="space-y-2">
-						<button 
+						<button
 							onClick={() => navigate("/network")}
 							className="w-full card-premium p-4 flex items-center justify-between transition-smooth hover:bg-surface-hover"
 						>
 							<div className="flex items-center gap-3">
-								<i className="fi fi-ts-network-analytic text-foreground text-lg"></i>
+								<i className="fi fi-ts-network-analytic flex align-center justify-center text-foreground text-lg"></i>
 								<div className="flex flex-col text-left">
 									<span className="text-foreground font-medium">
 										Network Giants
@@ -124,15 +124,15 @@ export default function Dashboard() {
 									</span>
 								</div>
 							</div>
-							<i className="fi fi-ts-angle-right text-muted-foreground"></i>
+							<i className="fi fi-ts-angle-right flex align-center justify-center text-muted-foreground"></i>
 						</button>
 
-						<button 
+						<button
 							onClick={() => navigate("/progresso")}
 							className="w-full card-premium p-4 flex items-center justify-between transition-smooth hover:bg-surface-hover"
 						>
 							<div className="flex items-center gap-3">
-								<i className="fi fi-ts-bars-progress text-foreground text-lg"></i>
+								<i className="fi fi-ts-bars-progress flex align-center justify-center text-foreground text-lg"></i>
 								<div className="flex flex-col text-left">
 									<span className="text-foreground font-medium">
 										Meu progresso
@@ -142,7 +142,7 @@ export default function Dashboard() {
 									</span>
 								</div>
 							</div>
-							<i className="fi fi-ts-angle-right text-muted-foreground"></i>
+							<i className="fi fi-ts-angle-right flex align-center justify-center text-muted-foreground"></i>
 						</button>
 					</div>
 				</div>
