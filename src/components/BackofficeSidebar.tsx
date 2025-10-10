@@ -37,9 +37,8 @@ export function BackofficeSidebar({ userRole = "user", userName = "Admin" }: Bac
   const navigate = useNavigate();
   const collapsed = state === "collapsed";
 
-  const isActive = (path: string) => location.pathname === path;
-  const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "bg-surface-elevated text-primary font-semibold" : "text-muted-foreground hover:bg-surface-hover hover:text-foreground";
+  const getNavCls = (path: string) =>
+    location.pathname === path ? "bg-surface-elevated text-primary font-semibold" : "text-muted-foreground hover:bg-surface-hover hover:text-foreground";
 
   const filteredItems = items.filter(
     (item) => !item.allowedRoles || item.allowedRoles.includes(userRole)
@@ -68,8 +67,8 @@ export function BackofficeSidebar({ userRole = "user", userName = "Admin" }: Bac
               <SidebarMenu>
                 {filteredItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild tooltip={item.title}>
-                      <NavLink to={item.url} end className={`${getNavCls} ${collapsed ? 'justify-center' : ''}`}>
+                    <SidebarMenuButton asChild tooltip={item.title}>
+                      <NavLink to={item.url} end className={getNavCls(item.url)}>
                         <i className={`${item.icon} text-lg`}></i>
                         {!collapsed && <span className="ml-3">{item.title}</span>}
                       </NavLink>

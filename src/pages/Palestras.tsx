@@ -16,11 +16,11 @@ export default function Palestras() {
 		getPalestras()
 			.then(({ data }) => {
 				setPalestras(data)
-				const categoriasUnicasEmUmaLinha = [
-					...new Set(data.map((palestra) => palestra.categoria))
-				]
+			const categoriasUnicasEmUmaLinha = [
+				...new Set(data.map((palestra) => palestra.categoria))
+			] as string[]
 
-				setCategorias(categoriasUnicasEmUmaLinha)
+			setCategorias(categoriasUnicasEmUmaLinha)
 			})
 			.catch((error) => {
 				console.error("Error fetching lectures:", error)

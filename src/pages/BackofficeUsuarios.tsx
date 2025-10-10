@@ -1,61 +1,140 @@
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  status: 'Ativo' | 'Inativo';
+  isAdmin: boolean;
+}
+
 export default function BackofficeUsuarios() {
-  const users = [
-    { id: 1, name: 'João Silva', email: 'joao@exemplo.com', role: 'membro', status: 'Ativo' },
-    { id: 2, name: 'Maria Santos', email: 'maria@exemplo.com', role: 'user', status: 'Ativo' },
-    { id: 3, name: 'Pedro Costa', email: 'pedro@exemplo.com', role: 'user', status: 'Inativo' },
+  const users: User[] = [
+    { id: 1, name: 'Adelmo Nathan Lopes de Jesus', email: 'adelmo.jesus@grupoacelerador.com.br', role: 'Colaborador', status: 'Ativo', isAdmin: false },
+    { id: 2, name: 'Agatha Sara Breves Magalhães', email: 'agatha.magalhaes@grupoacelerador.com.br', role: 'Colaborador', status: 'Ativo', isAdmin: false },
+    { id: 3, name: 'Alan Teixeira da Silva', email: 'alan.silva@grupoacelerador.com.br', role: 'Colaborador', status: 'Ativo', isAdmin: false },
+    { id: 4, name: 'Alexandre Guimarães de Moura', email: 'alexandre.moura@grupoacelerador.com.br', role: 'Colaborador', status: 'Ativo', isAdmin: false },
+    { id: 5, name: 'Alexandre Rodrigues Soares', email: 'alexandre.soares@grupoacelerador.com.br', role: 'Colaborador', status: 'Ativo', isAdmin: false },
   ];
 
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Usuários</h1>
-          <p className="text-sm text-muted-foreground">Gerenciar usuários do sistema</p>
+          <h1 className="text-2xl font-bold text-foreground">Gestão de Usuários</h1>
+          <p className="text-sm text-muted-foreground">Gerencie colaboradores, gestores e parceiros do programa</p>
         </div>
-        <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-smooth flex items-center gap-2">
-          <i className="fi fi-ts-user-add"></i>
-          Novo Usuário
-        </button>
+        <div className="flex gap-3">
+          <Button variant="outline">
+            <i className="fi fi-ts-upload"></i>
+            <span className="ml-2">Cadastro em Lote</span>
+          </Button>
+          <Button>
+            <i className="fi fi-ts-plus"></i>
+            <span className="ml-2">Novo Usuário</span>
+          </Button>
+        </div>
       </div>
 
+      {/* Filtro */}
+      <div className="card-elevated p-4">
+        <Select>
+          <SelectTrigger className="w-full bg-surface border-border">
+            <SelectValue placeholder="Filtro" />
+          </SelectTrigger>
+          <SelectContent className="bg-surface border-border">
+            <SelectItem value="todos">Todos</SelectItem>
+            <SelectItem value="ativos">Ativos</SelectItem>
+            <SelectItem value="inativos">Inativos</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Tabela de Usuários */}
       <div className="card-elevated overflow-hidden">
+        <div className="p-6 border-b border-border">
+          <h2 className="text-lg font-semibold text-foreground">Usuários ({users.length})</h2>
+          <p className="text-sm text-muted-foreground">Lista de todos os usuários cadastrados no programa</p>
+        </div>
+
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-surface border-b border-border">
+            <thead className="bg-surface-elevated border-b border-border">
               <tr>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-foreground">Nome</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-foreground">Email</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-foreground">Papel</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-foreground">Status</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-foreground">Ações</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Usuário
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Perfil
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Admin
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Opções
+                </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-border">
               {users.map((user) => (
-                <tr key={user.id} className="border-b border-border hover:bg-surface transition-smooth">
-                  <td className="py-4 px-6 text-sm text-foreground">{user.name}</td>
-                  <td className="py-4 px-6 text-sm text-muted-foreground">{user.email}</td>
-                  <td className="py-4 px-6">
-                    <span className="text-xs px-2 py-1 bg-primary/20 text-primary rounded-full capitalize">
+                <tr key={user.id} className="hover:bg-surface-hover transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                        <i className="fi fi-ts-user text-foreground"></i>
+                      </div>
+                      <div>
+                        <div className="font-medium text-foreground">{user.name}</div>
+                        <div className="text-sm text-muted-foreground">{user.email}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="px-3 py-1 rounded-full bg-muted text-foreground text-sm">
                       {user.role}
                     </span>
                   </td>
-                  <td className="py-4 px-6">
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      user.status === 'Ativo' ? 'bg-green-400/20 text-green-400' : 'bg-red-400/20 text-red-400'
+                  <td className="px-6 py-4">
+                    <span className={`px-3 py-1 rounded-full text-sm ${
+                      user.status === 'Ativo' 
+                        ? 'bg-green-500/10 text-green-500' 
+                        : 'bg-red-500/10 text-red-500'
                     }`}>
                       {user.status}
                     </span>
                   </td>
-                  <td className="py-4 px-6">
-                    <div className="flex gap-2">
-                      <button className="p-2 hover:bg-surface-hover rounded-lg transition-smooth">
-                        <i className="fi fi-ts-edit text-foreground"></i>
-                      </button>
-                      <button className="p-2 hover:bg-surface-hover rounded-lg transition-smooth">
-                        <i className="fi fi-ts-trash text-red-400"></i>
-                      </button>
-                    </div>
+                  <td className="px-6 py-4 text-sm text-foreground">
+                    {user.isAdmin ? 'Sim' : 'Não'}
+                  </td>
+                  <td className="px-6 py-4">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <i className="fi fi-ts-menu-dots-vertical"></i>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="bg-surface border-border">
+                        <DropdownMenuItem className="cursor-pointer hover:bg-surface-hover text-foreground">
+                          <i className="fi fi-ts-edit mr-2"></i>
+                          Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer hover:bg-surface-hover text-red-500">
+                          <i className="fi fi-ts-trash mr-2"></i>
+                          Excluir
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </td>
                 </tr>
               ))}
