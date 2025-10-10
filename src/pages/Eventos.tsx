@@ -101,8 +101,11 @@ export default function Eventos() {
 								<div className="flex items-center justify-between pt-2">
 									<div className="flex items-center gap-2">
 										<div className="flex -space-x-2">
-											{evento.pessoas_insc.map((pessoa) => (
-												<div className="w-8 h-8 overflow-hidden rounded-full bg-accent flex items-center justify-center text-xs border-2 border-surface-elevated">
+											{evento.pessoas_insc.map((pessoa, index) => (
+												<div
+													key={pessoa.pes_id + index}
+													className="w-8 h-8 overflow-hidden rounded-full bg-accent flex items-center justify-center text-xs border-2 border-surface-elevated"
+												>
 													{pessoa.foto_url === null ? (
 														<>👤</>
 													) : (

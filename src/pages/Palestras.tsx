@@ -1,11 +1,16 @@
 import { AppBar } from "@/components/AppBar"
+import { PalestraBottomSheet } from "@/components/PalestraBottomSheet"
 import { getPalestras } from "@/services/eventsService"
 import { PalestraDataType } from "@/types/events"
-import { useEffect, useState } from "react"
+import { getYoutubeThumbnail } from "@/utils/getYoutubeThumbnail"
+import React from "react"
+import { useState, useEffect } from "react"
 
 export default function Palestras() {
 	const [categorias, setCategorias] = useState<string[]>([])
 	const [palestras, setPalestras] = useState<PalestraDataType[]>([])
+	const [selectedPalestra, setSelectedPalestra] =
+		useState<PalestraDataType | null>(null)
 
 	useEffect(() => {
 		getPalestras()
@@ -38,7 +43,7 @@ export default function Palestras() {
 			<main className="p-6 pb-24 space-y-8 animate-fade-in">
 				{categorias.map((categoria, categoryIndex) => (
 					<section
-						key={categoryIndex}
+						key={categoria}
 						className="space-y-4"
 					>
 						{/* Category Title */}
@@ -49,19 +54,21 @@ export default function Palestras() {
 						{/* Horizontal Scroll Container */}
 						<div className="flex gap-4 overflow-x-auto pb-2 -mx-6 px-6 scrollbar-hide">
 							{palestras.map((palestra, index) => (
-								<>
+								<React.Fragment key={palestra.id}>
 									{palestra.categoria === categoria && (
 										<div
-											key={palestra.id}
-											className="card-elevated overflow-hidden flex-shrink-0 w-[280px] transition-smooth hover:scale-[1.02]"
+											className="card-elevated overflow-hidden flex-shrink-0 w-[280px] transition-smooth hover:scale-[1.02] cursor-pointer"
 											style={{
 												animationDelay: `${(categoryIndex * 3 + index) * 0.1}s`
 											}}
+											onClick={() => setSelectedPalestra(palestra)}
 										>
-											<div className="relative h-48 bg-gradient-to-br from-surface to-surface-elevated flex items-end p-6">
-												<div className="absolute top-4 right-4 w-24 h-24 rounded-full bg-surface-hover border-2 border-border flex items-center justify-center text-4xl">
-													{palestra.link}
-												</div>
+											<div className="relative h-40 bg-gradient-to-br from-surface to-surface-elevated flex items-end">
+												<img
+													src={getYoutubeThumbnail(palestra.link)}
+													alt={palestra.nome}
+													className="w-full h-full object-cover"
+												/>
 											</div>
 
 											<div className="p-4">
@@ -71,7 +78,7 @@ export default function Palestras() {
 											</div>
 										</div>
 									)}
-								</>
+								</React.Fragment>
 							))}
 						</div>
 					</section>
@@ -79,6 +86,18 @@ export default function Palestras() {
 			</main>
 
 			<AppBar />
+
+			<PalestraBottomSheet
+				open={!!selectedPalestra}
+				onOpenChange={(open) => {
+					if (!open) {
+						setSelectedPalestra(null)
+					}
+				}}
+				title={selectedPalestra?.nome}
+				description={selectedPalestra?.descricao}
+				videoUrl={selectedPalestra?.link}
+			/>
 		</div>
 	)
 }
