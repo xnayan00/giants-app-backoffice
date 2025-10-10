@@ -1,11 +1,17 @@
 import { AppBar } from "@/components/AppBar"
+import { EventoBottomSheet } from "@/components/EventoBottomSheet"
 import { getCalendarioAction } from "@/services/eventsService"
 import { EventoDataType } from "@/types/events"
 import { getDate, getTime } from "@/utils/formatDate"
+import { Image } from "lucide-react"
 import { useEffect, useState } from "react"
+import patternBg from "@/assets/pattern-bg.png"
 
 export default function Eventos() {
 	const [eventos, setEventos] = useState<EventoDataType[]>([])
+	const [selectedEvento, setSelectedEvento] = useState<EventoDataType | null>(
+		null
+	)
 
 	useEffect(() => {
 		getCalendarioAction({ pes_id: 198 })
@@ -61,8 +67,9 @@ export default function Eventos() {
 				{eventos.map((evento, index) => (
 					<div
 						key={evento.id}
-						className="card-elevated overflow-hidden transition-smooth hover:scale-[1.01]"
+						className="card-elevated overflow-hidden transition-smooth hover:scale-[1.01] cursor-pointer"
 						style={{ animationDelay: `${index * 0.1}s` }}
+						onClick={() => setSelectedEvento(evento)}
 					>
 						{/* Date/Time Badge */}
 						<div className="flex items-center justify-center gap-3 py-3 px-4 bg-surface-elevated border-b border-border">
@@ -79,11 +86,18 @@ export default function Eventos() {
 						<div className="p-5">
 							{/* Thumbnail */}
 							<div className="w-full overflow-hidden h-24 bg-surface rounded-lg flex items-center justify-center text-5xl mb-4">
-								<img
-									src={evento.eve_foto_url}
-									alt=""
-									className="w-full h-full object-cover"
-								/>
+								{!evento.eve_foto_url ? (
+									<img
+										src={patternBg}
+										alt=""
+									/>
+								) : (
+									<img
+										src={evento.eve_foto_url}
+										alt=""
+										className="w-full h-full object-cover"
+									/>
+								)}
 							</div>
 
 							{/* Event Info */}
@@ -133,6 +147,16 @@ export default function Eventos() {
 			</main>
 
 			<AppBar />
+
+			<EventoBottomSheet
+				open={!!selectedEvento}
+				onOpenChange={(open) => {
+					if (!open) {
+						setSelectedEvento(null)
+					}
+				}}
+				evento={selectedEvento}
+			/>
 		</div>
 	)
 }
