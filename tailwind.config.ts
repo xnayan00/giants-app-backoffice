@@ -14,7 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Arbeit', 'sans-serif'],
+        display: ['Denton Test', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
