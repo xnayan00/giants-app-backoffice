@@ -1,28 +1,65 @@
 import { AppBar } from "@/components/AppBar"
 import { useNavigate } from "react-router-dom"
 import logoGiants from "@/assets/logo-horizontal-white.svg"
+import { useEffect, useState } from "react"
+import { getCalendarioAction } from "@/services/eventsService"
+import { getConsumoEmpresa } from "@/services/companyService"
+import { EventoDataType } from "@/types/events"
+import { formatDate } from "@/utils/formatDate"
+import { EmpresaConsumo } from "@/types/company"
+import { fetchMembrosAction } from "@/services/membrosService"
+import { MembroDataType } from "@/types/membros"
 
 export default function Dashboard() {
 	const navigate = useNavigate()
-	const user = {
-		name: "João Silva",
-		role: "Participante",
-		nextEvent: {
-			name: "Imersão Tech 2025",
-			date: "15 de Março, 2025",
-			location: "São Paulo, SP"
-		},
-		stats: {
-			imersoes: 3,
-			encontros: 12
-		}
-	}
+	const [currentMember, setCurrentMember] = useState<MembroDataType>()
+	const [nextEvent, setNextEvent] = useState<EventoDataType>()
+	const [empresaConsumo, setEmpresaConsumo] = useState<EmpresaConsumo[]>([])
 
-	const gs = {
-		name: "Ana Souza",
-		whatsapp: "5511999999999",
-		email: "ana.souza@example.com"
-	}
+	useEffect(() => {
+		getCalendarioAction()
+			.then(({ data }) => {
+				const dataAtual = new Date()
+
+				const eventosFuturosDisponiveis = data.data.filter((evento) => {
+					const dataInicioEvento = new Date(evento.data_inicio)
+					return dataInicioEvento >= dataAtual && evento.inscrito === false
+				})
+
+				const proximoEvento =
+					eventosFuturosDisponiveis.length > 0
+						? eventosFuturosDisponiveis.reduce((maisProximo, eventoAtual) => {
+								const dataMaisProximo = new Date(maisProximo.data_inicio)
+								const dataEventoAtual = new Date(eventoAtual.data_inicio)
+
+								return dataEventoAtual < dataMaisProximo
+									? eventoAtual
+									: maisProximo
+						  }, eventosFuturosDisponiveis[0])
+						: null
+
+				setNextEvent(proximoEvento)
+			})
+			.catch((error) => {
+				console.log(error)
+			})
+
+		getConsumoEmpresa(198)
+			.then(({ data }) => {
+				setEmpresaConsumo([data[0], data[1]])
+			})
+			.catch((error) => {
+				console.log(error)
+			})
+
+		fetchMembrosAction({ pes_email: "yan.mendes@grupoacelerador.com.br" })
+			.then(({ data }) => {
+				setCurrentMember(data.data[0])
+			})
+			.catch((error) => {
+				console.log(error)
+			})
+	}, [])
 
 	return (
 		<div className="app-container">
@@ -52,59 +89,69 @@ export default function Dashboard() {
 			{/* Main Content */}
 			<main className="p-6 space-y-6 animate-fade-in">
 				{/* Next Event Card */}
-				<div className="card-elevated p-6 space-y-4">
-					<div className="flex items-center gap-3">
-						<div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-							<i className="fi fi-ts-calendar flex align-center justify-center text-primary text-lg"></i>
+				{nextEvent && (
+					<div className="card-elevated p-6 space-y-4">
+						<div className="flex items-center gap-3">
+							<div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+								<i className="fi fi-ts-calendar flex align-center justify-center text-primary text-lg"></i>
+							</div>
+							<div>
+								<p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+									Próximo Evento
+								</p>
+								<h2 className="text-lg font-semibold text-foreground">
+									{nextEvent.descricao}
+								</h2>
+							</div>
 						</div>
-						<div>
-							<p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-								Próximo Evento
-							</p>
-							<h2 className="text-lg font-semibold text-foreground">
-								{user.nextEvent.name}
-							</h2>
-						</div>
-					</div>
 
-					<div className="space-y-2">
-						<div className="flex items-center gap-2 text-muted-foreground">
-							<i className="fi fi-ts-clock text-sm"></i>
-							<span className="text-sm">{user.nextEvent.date}</span>
-						</div>
-						<div className="flex items-center gap-2 text-muted-foreground">
-							<i className="fi fi-ts-marker text-sm"></i>
-							<span className="text-sm">{user.nextEvent.location}</span>
+						<div className="space-y-2">
+							<div className="flex items-center gap-2 text-muted-foreground">
+								<i className="fi fi-ts-clock text-sm"></i>
+								<span className="text-sm">
+									{formatDate(nextEvent.data_inicio)}
+								</span>
+							</div>
+							<div className="flex items-center gap-2 text-muted-foreground">
+								<i className="fi fi-ts-marker text-sm"></i>
+								<span className="text-sm">{nextEvent.endereco}</span>
+							</div>
 						</div>
 					</div>
-				</div>
+				)}
 
 				{/* Stats Grid */}
-				<div className="grid grid-cols-2 gap-4">
-					<div className="card-premium p-6 space-y-2">
-						<div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-							<i className="fi fi-ts-diploma flex align-center justify-center text-accent text-lg"></i>
+				{empresaConsumo.length > 0 && (
+					<div className="grid grid-cols-2 gap-4">
+						<div className="card-premium p-6 space-y-2">
+							<div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
+								<i className="fi fi-ts-diploma flex align-center justify-center text-accent text-lg"></i>
+							</div>
+							<div>
+								<p className="text-3xl font-bold text-foreground">
+									{empresaConsumo[0].consumido}
+								</p>
+								<p className="text-sm text-muted-foreground">
+									{empresaConsumo[0].grupo}
+								</p>
+							</div>
 						</div>
-						<div>
-							<p className="text-3xl font-bold text-foreground">
-								{user.stats.imersoes}
-							</p>
-							<p className="text-sm text-muted-foreground">Imersões</p>
-						</div>
-					</div>
 
-					<div className="card-premium p-6 space-y-2">
-						<div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-							<i className="fi fi-ts-handshake flex align-center justify-center text-accent text-lg"></i>
-						</div>
-						<div>
-							<p className="text-3xl font-bold text-foreground">
-								{user.stats.encontros}
-							</p>
-							<p className="text-sm text-muted-foreground">Encontros</p>
+						<div className="card-premium p-6 space-y-2">
+							<div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
+								<i className="fi fi-ts-handshake flex align-center justify-center text-accent text-lg"></i>
+							</div>
+							<div>
+								<p className="text-3xl font-bold text-foreground">
+									{empresaConsumo[1].consumido}
+								</p>
+								<p className="text-sm text-muted-foreground">
+									{empresaConsumo[1].grupo}
+								</p>
+							</div>
 						</div>
 					</div>
-				</div>
+				)}
 
 				{/* Quick Actions */}
 				<div className="space-y-3">
@@ -150,38 +197,40 @@ export default function Dashboard() {
 				{/* GS Data */}
 				<div className="space-y-3">
 					{/* GS Card */}
-					<div className="card-elevated p-6 space-y-4">
-						<div className="flex items-center justify-between">
-							<div>
-								<span className="text-foreground text-sm font-medium">
-									{"Gerente de Sucesso (GS)"}
-								</span>
-								<h2 className="text-lg font-semibold text-foreground">
-									{gs.name}
-								</h2>
-							</div>
-							<div className="flex items-center gap-2">
-								<button className="w-[50px] h-[50px] rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-smooth">
-									<a
-										className="w-full h-full flex items-center justify-center"
-										href={`https://wa.me/${gs.whatsapp}`}
-										target="_blank"
-									>
-										<i className="fi fi-brands-whatsapp flex align-center justify-center text-xl text-foreground"></i>
-									</a>
-								</button>
-								<button className="w-[50px] h-[50px] rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-smooth">
-									<a
-										className="w-full h-full flex items-center justify-center"
-										href={`mailto:${gs.email}`}
-										target="_blank"
-									>
-										<i className="fi fi-ts-envelope flex align-center justify-center text-xl text-foreground"></i>
-									</a>
-								</button>
+					{currentMember && (
+						<div className="card-elevated p-6 space-y-4">
+							<div className="flex items-center justify-between">
+								<div>
+									<span className="text-foreground text-sm font-medium">
+										{"Gerente de Sucesso (GS)"}
+									</span>
+									<h2 className="text-lg font-semibold text-foreground">
+										{currentMember.gs_nome}
+									</h2>
+								</div>
+								<div className="flex items-center gap-2">
+									<button className="w-[50px] h-[50px] rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-smooth">
+										<a
+											className="w-full h-full flex items-center justify-center"
+											href={`https://api.whatsapp.com/send?phone=55${currentMember.gs_fone}`}
+											target="_blank"
+										>
+											<i className="fi fi-brands-whatsapp flex align-center justify-center text-xl text-foreground"></i>
+										</a>
+									</button>
+									<button className="w-[50px] h-[50px] rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-smooth">
+										<a
+											className="w-full h-full flex items-center justify-center"
+											href={`mailto:${currentMember.gs_email}`}
+											target="_blank"
+										>
+											<i className="fi fi-ts-envelope flex align-center justify-center text-xl text-foreground"></i>
+										</a>
+									</button>
+								</div>
 							</div>
 						</div>
-					</div>
+					)}
 				</div>
 			</main>
 
