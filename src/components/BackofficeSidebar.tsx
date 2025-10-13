@@ -1,4 +1,4 @@
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { matchPath, NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   Sidebar, 
   SidebarContent,
@@ -11,6 +11,9 @@ import {
   useSidebar
 } from "@/components/ui/sidebar";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
+import SymbolWhite from "@/assets/symbol-white.svg";
+import LogoHorizontalWhite from "@/assets/logo-horizontal-white.svg";
+import PatternBg2 from "@/assets/pattern-bg-2.png";
 
 interface SidebarItem {
   title: string;
@@ -20,10 +23,10 @@ interface SidebarItem {
 }
 
 const items: SidebarItem[] = [
-  { title: "Dashboard", url: "/backoffice/dashboard", icon: "fi fi-ts-apps", allowedRoles: ["membro"] },
-  { title: "Usuários", url: "/backoffice/usuarios", icon: "fi fi-ts-users", allowedRoles: ["membro"] },
-  { title: "Eventos", url: "/backoffice/eventos", icon: "fi fi-ts-calendar" },
-  { title: "Logs", url: "/backoffice/logs", icon: "fi fi-ts-time-past", allowedRoles: ["membro"] },
+  { title: "Dashboard", url: "/backoffice/dashboard", icon: "chart-pie-alt", allowedRoles: ["membro"] },
+  { title: "Usuários", url: "/backoffice/usuarios", icon: "users", allowedRoles: ["membro"] },
+  { title: "Eventos", url: "/backoffice/eventos", icon: "calendar" },
+  { title: "Logs", url: "/backoffice/logs", icon: "search-alt", allowedRoles: ["membro"] },
 ];
 
 interface BackofficeSidebarProps {
@@ -38,26 +41,29 @@ export function BackofficeSidebar({ userRole = "user", userName = "Admin" }: Bac
   const collapsed = state === "collapsed";
 
   const getNavCls = (path: string) =>
-    location.pathname === path ? "bg-surface-elevated text-primary font-semibold" : "text-muted-foreground hover:bg-surface-hover hover:text-foreground";
+    location.pathname === path ? "bg-[#2b2b2b] text-primary font-semibold" : "text-muted-foreground hover:bg-surface-hover hover:text-foreground";
 
   const filteredItems = items.filter(
     (item) => !item.allowedRoles || item.allowedRoles.includes(userRole)
   );
 
+  function checkIsActive(path: string) {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { pathname } = useLocation()
+  
+      return matchPath({ path, end: false }, pathname)
+    }
+
   return (
     <Sidebar collapsible="icon">
-      <SidebarContent className="bg-surface border-r border-border flex flex-col">
+      <SidebarContent className="bg-surface flex flex-col" style={{backgroundImage: `url(${PatternBg2})`, backgroundSize: '300px', backgroundRepeat: 'no-repeat', backgroundPosition: 'bottom right'}}>
         <div className="flex-grow">
-          <div className="p-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <i className="fi fi-ts-apps text-primary-foreground text-lg"></i>
-              </div>
-              {!collapsed && (
-                <div>
-                  <h1 className="text-lg font-bold text-foreground">Backoffice</h1>
-                  <p className="text-xs text-muted-foreground">Admin Panel</p>
-                </div>
+          <div className="group-data-[collapsible=icon]:!p-2 p-6">
+            <div className="flex items-center group-data-[collapsible=icon]:!justify-center gap-3">
+              {!collapsed ? (
+                <img src={LogoHorizontalWhite} alt="Símbolo Giants" width="500px"/>
+              ) : (
+                <img src={SymbolWhite} alt="Logotipo Giants" width="50px" />
               )}
             </div>
           </div>
@@ -68,8 +74,8 @@ export function BackofficeSidebar({ userRole = "user", userName = "Admin" }: Bac
                 {filteredItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild tooltip={item.title}>
-                      <NavLink to={item.url} end className={getNavCls(item.url)}>
-                        <i className={`${item.icon} text-lg`}></i>
+                      <NavLink to={item.url} end className={`p-6 transition-all duration-300 ${getNavCls(item.url)}`}>
+                        <i className={`flex align-center fi fi-${checkIsActive(item.url) ? "ss-" : "ts-"}${item.icon} text-lg`}></i>
                         {!collapsed && <span className="ml-3">{item.title}</span>}
                       </NavLink>
                     </SidebarMenuButton>
@@ -81,12 +87,12 @@ export function BackofficeSidebar({ userRole = "user", userName = "Admin" }: Bac
         </div>
 
         {/* User button at the bottom */}
-        <div className="p-4 border-t border-border">
+        <div className="p-4 group-data-[collapsible=icon]:px-[4px]">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className={`flex items-center gap-3 hover:bg-surface rounded-lg px-3 py-2 transition-smooth w-full ${collapsed ? 'justify-center' : ''}`}>
-                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-                  <i className="fi fi-ts-user text-foreground"></i>
+              <button className={`flex items-center gap-3 hover:bg-surface-elevated bg-surface-elevated group-data-[collapsible=icon]:bg-transparent rounded-lg px-3 py-2 transition-smooth w-full ${collapsed ? 'justify-center' : ''}`}>
+                <div className="w-10 h-10 rounded-full flex items-center justify-center">
+                  <i className="fi fi-ts-circle-user text-white flex align-center justify-center text-2xl"></i>
                 </div>
                 {!collapsed && (
                   <div className="text-left flex-grow">
