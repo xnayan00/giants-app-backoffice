@@ -1,14 +1,6 @@
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
 	ChartContainer,
-	ChartLegend,
-	ChartLegendContent,
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/components/ui/chart"
@@ -21,10 +13,10 @@ export default function ParticipacoesEventosChart({
 	data: EventoEmpresaPerfil[]
 }) {
 	const chartData = data
-	const COLORS = ["#60a5fa", "#a78bfa", "#4ade80"]
 	const chartConfig = {
 		total: {
 			label: "Total",
+			color: "#8884d8",
 		},
 		colaborador: {
 			label: "Colaborador",
@@ -32,7 +24,7 @@ export default function ParticipacoesEventosChart({
 		},
 		lideranca: {
 			label: "Liderança",
-			color: "#a78bfa",
+			color: "#facc15",
 		},
 		membro: {
 			label: "Membro",
@@ -64,10 +56,14 @@ export default function ParticipacoesEventosChart({
 							innerRadius={60}
 							strokeWidth={5}
 						>
-							{chartData.map((_, index) => (
+							{chartData.map((entry) => (
 								<Cell
-									key={`cell-${index}`}
-									fill={COLORS[index % COLORS.length]}
+									key={entry.perfil}
+									fill={
+										chartConfig[
+											entry.perfil.toLowerCase() as keyof typeof chartConfig
+										]?.color || "#8884d8"
+									}
 								/>
 							))}
 							<Label
@@ -100,13 +96,30 @@ export default function ParticipacoesEventosChart({
 								}}
 							/>
 						</Pie>
-						<ChartLegend
-							content={<ChartLegendContent nameKey="perfil" />}
-							className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
-						/>
 					</PieChart>
 				</ChartContainer>
 			</CardContent>
+			<div className="flex items-center justify-center gap-4 p-4">
+				{Object.keys(chartConfig)
+					.filter((key) => key !== "total")
+					.map((key) => (
+						<div
+							key={key}
+							className="flex items-center gap-2"
+						>
+							<div
+								className="h-2 w-2 shrink-0 rounded-[2px]"
+								style={{
+									backgroundColor:
+										chartConfig[key as keyof typeof chartConfig]?.color,
+								}}
+							/>
+							<span className="text-white">
+								{chartConfig[key as keyof typeof chartConfig]?.label}
+							</span>
+						</div>
+					))}
+			</div>
 		</Card>
 	)
 }

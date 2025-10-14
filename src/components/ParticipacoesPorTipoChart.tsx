@@ -1,14 +1,11 @@
 import {
 	Card,
 	CardContent,
-	CardDescription,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card"
 import {
 	ChartContainer,
-	ChartLegend,
-	ChartLegendContent,
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/components/ui/chart"
@@ -48,12 +45,11 @@ export default function ParticipacoesPorTipoChart({
 		<Card>
 			<CardHeader>
 				<CardTitle>Participações em Eventos por Tipo</CardTitle>
-				<CardDescription>Encontros, imersões, onlive e outros</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<ChartContainer
 					config={chartConfig}
-					className="min-h-[150px] w-full"
+					className="min-h-[100px] h-[140px] w-full"
 				>
 					<BarChart
 						accessibilityLayer
@@ -83,6 +79,7 @@ export default function ParticipacoesPorTipoChart({
 						<Bar
 							dataKey="total"
 							radius={5}
+							barSize={100}
 						>
 							{chartData.map((_, index) => (
 								<Cell
@@ -91,12 +88,23 @@ export default function ParticipacoesPorTipoChart({
 								/>
 							))}
 						</Bar>
-						<ChartLegend
-							content={<ChartLegendContent nameKey="gr_descricao" />}
-							className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
-						/>
 					</BarChart>
 				</ChartContainer>
+				<div className="flex items-center justify-center gap-4 p-4">
+					{Object.keys(chartConfig)
+						.filter((key) => key !== "total")
+						.map((key, index) => (
+							<div key={key} className="flex items-center gap-2">
+								<div
+									className="h-2 w-2 shrink-0 rounded-[2px]"
+									style={{ backgroundColor: COLORS[index % COLORS.length] }}
+								/>
+								<span className="text-white">
+									{chartConfig[key as keyof typeof chartConfig]?.label}
+								</span>
+							</div>
+						))}
+				</div>
 			</CardContent>
 		</Card>
 	)
