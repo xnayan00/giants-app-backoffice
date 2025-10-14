@@ -22,6 +22,9 @@ export interface EventoDataType {
 	inscrito: boolean
 	eve_foto_url: string
 	link_inscricao: string | null
+	autorizados?: string
+	recusados?: string
+	pendentes?: string
 }
 
 export interface CalendarioDataType {
@@ -34,6 +37,7 @@ export interface GetCalendarioParamsDataType {
 	qtd_pessoas?: number
 	origem?: string
 	id_origem?: number
+	emp_id?: number
 	pes_id?: number
 }
 
