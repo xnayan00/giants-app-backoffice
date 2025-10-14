@@ -2,7 +2,5 @@
 	"singleAttributePerLine": true,
 	"tabWidth": 2,
 	"useTabs": true,
-	"semi": false,
-	"trailingComma": "none",
-	"plugins": ["prettier-plugin-tailwindcss"]
+	"semi": false
 }

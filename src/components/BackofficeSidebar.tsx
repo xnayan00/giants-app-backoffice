@@ -90,7 +90,7 @@ export function BackofficeSidebar({ userRole = "user", userName = "Admin" }: Bac
         <div className="p-4 group-data-[collapsible=icon]:px-[4px]">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className={`flex items-center gap-3 hover:bg-surface-elevated bg-surface-elevated group-data-[collapsible=icon]:bg-transparent rounded-lg px-3 py-2 transition-smooth w-full ${collapsed ? 'justify-center' : ''}`}>
+              <button className={`flex items-center gap-3 hover:bg-surface-elevated bg-surface-elevated group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:hover:bg-surface-elevated rounded-lg px-3 py-2 transition-smooth w-full ${collapsed ? 'justify-center' : ''}`}>
                 <div className="w-10 h-10 rounded-full flex items-center justify-center">
                   <i className="fi fi-ts-circle-user text-white flex align-center justify-center text-2xl"></i>
                 </div>

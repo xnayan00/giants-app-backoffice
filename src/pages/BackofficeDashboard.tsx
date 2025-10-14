@@ -1,52 +1,137 @@
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card"
+import { getDashboard } from "@/services/dashboardService"
+import { DashboardResponseList, Indicador } from "@/types/dashboard"
+import { useEffect, useState } from "react"
+import PessoasEmpresaChart from "@/components/PessoasEmpresaChart"
+import ParticipacoesEventosChart from "@/components/ParticipacoesEventosChart"
+import ParticipacoesPorTipoChart from "@/components/ParticipacoesPorTipoChart"
+import { Skeleton } from "@/components/ui/skeleton"
+
 export default function BackofficeDashboard() {
-  return (
-    <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Visão geral do sistema</p>
-      </div>
+	const [data, setData] = useState<DashboardResponseList | null>(null)
+	const [loading, setLoading] = useState(true)
+	const [error, setError] = useState<string | null>(null)
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {[
-          { label: 'Total Usuários', value: '1,234', icon: 'fi fi-ts-users', color: 'text-blue-400' },
-          { label: 'Eventos Ativos', value: '12', icon: 'fi fi-ts-calendar', color: 'text-green-400' },
-          { label: 'Palestras', value: '48', icon: 'fi fi-ts-presentation', color: 'text-purple-400' },
-          { label: 'Conexões', value: '5,678', icon: 'fi fi-ts-link', color: 'text-yellow-400' },
-        ].map((stat, index) => (
-          <div key={index} className="card-elevated p-6 space-y-3">
-            <div className="flex items-center justify-between">
-              <i className={`${stat.icon} text-2xl ${stat.color}`}></i>
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-foreground">{stat.value}</p>
-              <p className="text-sm text-muted-foreground mt-1">{stat.label}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+	useEffect(() => {
+		getDashboard(198)
+			.then(({ data }) => {
+				setData(data)
+				setLoading(false)
+			})
+			.catch((error) => {
+				setError("Erro ao carregar os dados do dashboard.")
+				setLoading(false)
+				console.error(error)
+			})
+	}, [])
 
-      {/* Recent Activity */}
-      <div className="card-elevated p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-4">Atividade Recente</h2>
-        
-        <div className="space-y-3">
-          {[
-            { action: 'Novo usuário cadastrado', time: 'Há 5 minutos', icon: 'fi fi-ts-user' },
-            { action: 'Evento atualizado', time: 'Há 1 hora', icon: 'fi fi-ts-calendar' },
-            { action: 'Palestra publicada', time: 'Há 2 horas', icon: 'fi fi-ts-presentation' },
-            { action: 'Nova conexão realizada', time: 'Há 3 horas', icon: 'fi fi-ts-link' },
-          ].map((activity, index) => (
-            <div key={index} className="flex items-center gap-3 p-3 bg-surface rounded-lg">
-              <i className={`${activity.icon} text-muted-foreground`}></i>
-              <div className="flex-1">
-                <p className="text-sm text-foreground">{activity.action}</p>
-                <p className="text-xs text-muted-foreground">{activity.time}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+	const getIndicador = (id: Indicador["id"]) => {
+		return data?.[0].resultado_final.indicadores.find((ind) => ind.id === id)
+			?.total
+	}
+
+	const pessoasAtivas = getIndicador("qtd_pessoas_ativas")
+	const participacaoEventos = getIndicador("qtd_pessoas_eventos")
+	const aprovacoesPendentes = getIndicador("qtd_eventos_pessoas_pendentes")
+
+	const pessoasEmpresa = data?.[0].resultado_final.pessoas_empresa
+	const participacoesPerfil = data?.[0].resultado_final.eventos_empresa_perfil
+	const participacoesTipo = data?.[0].resultado_final.eventos_empresa_tipo
+
+	if (loading) {
+		return (
+			<div className="space-y-6 animate-fade-in">
+				<div>
+					<h1 className="text-2xl font-bold text-foreground">
+						Painel Operacional
+					</h1>
+					<p className="text-sm text-muted-foreground">
+						Acompanhe métricas estratégicas e evolução das inscrições.
+					</p>
+				</div>
+				<div className="grid gap-4 md:grid-cols-3">
+					<Skeleton className="h-32" />
+					<Skeleton className="h-32" />
+					<Skeleton className="h-32" />
+				</div>
+				<div className="grid gap-4 md:grid-cols-2">
+					<Skeleton className="h-64" />
+					<Skeleton className="h-64" />
+				</div>
+				<div>
+					<Skeleton className="h-80" />
+				</div>
+			</div>
+		)
+	}
+
+	if (error) {
+		return (
+			<div className="flex items-center justify-center h-full">
+				<p className="text-red-500">{error}</p>
+			</div>
+		)
+	}
+
+	return (
+		<div className="space-y-6 animate-fade-in">
+			<div>
+				<h1 className="text-2xl font-bold text-foreground">
+					Painel Operacional
+				</h1>
+				<p className="text-sm text-muted-foreground">
+					Acompanhe métricas estratégicas e evolução das inscrições.
+				</p>
+			</div>
+
+			<div className="grid gap-4 md:grid-cols-3">
+				<Card>
+					<CardHeader>
+						<CardTitle>Pessoas Ativas</CardTitle>
+						<CardDescription>Qtd cadastrados</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<p className="text-3xl font-bold">{pessoasAtivas}</p>
+					</CardContent>
+				</Card>
+				<Card>
+					<CardHeader>
+						<CardTitle>Participação de Pessoas em Eventos</CardTitle>
+						<CardDescription>Qtd eventos</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<p className="text-3xl font-bold">{participacaoEventos}</p>
+					</CardContent>
+				</Card>
+				<Card>
+					<CardHeader>
+						<CardTitle>Aprovações Pendentes</CardTitle>
+						<CardDescription>Qtd eventos</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<p className="text-3xl font-bold">{aprovacoesPendentes}</p>
+					</CardContent>
+				</Card>
+			</div>
+
+			<div className="grid gap-4 md:grid-cols-2">
+				{pessoasEmpresa && <PessoasEmpresaChart data={pessoasEmpresa} />}
+				{participacoesPerfil && (
+					<ParticipacoesEventosChart data={participacoesPerfil} />
+				)}
+			</div>
+
+			<div>
+				{participacoesTipo && (
+					<ParticipacoesPorTipoChart data={participacoesTipo} />
+				)}
+			</div>
+		</div>
+	)
 }
