@@ -23,3 +23,15 @@ export interface PessoaDataType {
 	pes_tem_foto: number
 	pes_foto_url: string
 }
+
+export interface CompanyLogsDataType {
+	pes_id: number
+	pes_nome: string
+	perfil: string
+	admin: boolean
+	emp_id: number
+	emp_fantasia: string
+	datetime: string | null
+	acao: string
+	detalhes: string
+}
