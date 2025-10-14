@@ -7,11 +7,13 @@ import {
 } from "@/components/ui/card"
 import {
 	ChartContainer,
+	ChartLegend,
+	ChartLegendContent,
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/components/ui/chart"
 import { EventoEmpresaPerfil } from "@/types/dashboard"
-import { Label, Pie, PieChart } from "recharts"
+import { Label, Pie, PieChart, Cell } from "recharts"
 
 export default function ParticipacoesEventosChart({
 	data,
@@ -19,21 +21,22 @@ export default function ParticipacoesEventosChart({
 	data: EventoEmpresaPerfil[]
 }) {
 	const chartData = data
+	const COLORS = ["#60a5fa", "#a78bfa", "#4ade80"]
 	const chartConfig = {
 		total: {
 			label: "Total",
 		},
 		colaborador: {
 			label: "Colaborador",
-			color: "hsl(var(--chart-1))",
+			color: "#60a5fa",
 		},
 		lideranca: {
 			label: "Liderança",
-			color: "hsl(var(--chart-2))",
+			color: "#a78bfa",
 		},
 		membro: {
 			label: "Membro",
-			color: "hsl(var(--chart-3))",
+			color: "#4ade80",
 		},
 	}
 
@@ -43,7 +46,6 @@ export default function ParticipacoesEventosChart({
 		<Card className="flex flex-col">
 			<CardHeader className="items-center pb-0">
 				<CardTitle>Participações em Eventos por Perfil</CardTitle>
-				<CardDescription>Colaborador, liderança e membro</CardDescription>
 			</CardHeader>
 			<CardContent className="flex-1 pb-0">
 				<ChartContainer
@@ -62,6 +64,12 @@ export default function ParticipacoesEventosChart({
 							innerRadius={60}
 							strokeWidth={5}
 						>
+							{chartData.map((_, index) => (
+								<Cell
+									key={`cell-${index}`}
+									fill={COLORS[index % COLORS.length]}
+								/>
+							))}
 							<Label
 								content={({ viewBox }) => {
 									if (viewBox && "cx" in viewBox && "cy" in viewBox) {
@@ -92,6 +100,10 @@ export default function ParticipacoesEventosChart({
 								}}
 							/>
 						</Pie>
+						<ChartLegend
+							content={<ChartLegendContent nameKey="perfil" />}
+							className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+						/>
 					</PieChart>
 				</ChartContainer>
 			</CardContent>

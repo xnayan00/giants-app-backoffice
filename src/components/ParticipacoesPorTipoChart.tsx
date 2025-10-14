@@ -7,11 +7,13 @@ import {
 } from "@/components/ui/card"
 import {
 	ChartContainer,
+	ChartLegend,
+	ChartLegendContent,
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/components/ui/chart"
 import { EventoEmpresaTipo } from "@/types/dashboard"
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell } from "recharts"
 
 export default function ParticipacoesPorTipoChart({
 	data,
@@ -19,10 +21,26 @@ export default function ParticipacoesPorTipoChart({
 	data: EventoEmpresaTipo[]
 }) {
 	const chartData = data
+	const COLORS = ["#60a5fa", "#a78bfa", "#4ade80", "#facc15"]
 	const chartConfig = {
 		total: {
 			label: "Total",
-			color: "hsl(var(--chart-1))",
+		},
+		encontros: {
+			label: "Encontros",
+			color: "#60a5fa",
+		},
+		imersoes: {
+			label: "Imersões",
+			color: "#a78bfa",
+		},
+		onlive: {
+			label: "Onlive",
+			color: "#4ade80",
+		},
+		outros: {
+			label: "Outros",
+			color: "#facc15",
 		},
 	}
 
@@ -30,21 +48,19 @@ export default function ParticipacoesPorTipoChart({
 		<Card>
 			<CardHeader>
 				<CardTitle>Participações em Eventos por Tipo</CardTitle>
-				<CardDescription>
-					Encontros, imersões, onlive e outros
-				</CardDescription>
+				<CardDescription>Encontros, imersões, onlive e outros</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<ChartContainer
 					config={chartConfig}
-					className="min-h-[200px] w-full"
+					className="min-h-[150px] w-full"
 				>
 					<BarChart
 						accessibilityLayer
 						data={chartData}
 						layout="vertical"
 						margin={{
-							left: -20,
+							left: 50,
 						}}
 					>
 						<CartesianGrid horizontal={false} />
@@ -55,12 +71,30 @@ export default function ParticipacoesPorTipoChart({
 							tickMargin={10}
 							axisLine={false}
 						/>
-						<XAxis dataKey="total" type="number" hide />
+						<XAxis
+							dataKey="total"
+							type="number"
+							hide
+						/>
 						<ChartTooltip
 							cursor={false}
 							content={<ChartTooltipContent />}
 						/>
-						<Bar dataKey="total" fill="var(--color-total)" radius={5} />
+						<Bar
+							dataKey="total"
+							radius={5}
+						>
+							{chartData.map((_, index) => (
+								<Cell
+									key={`cell-${index}`}
+									fill={COLORS[index % COLORS.length]}
+								/>
+							))}
+						</Bar>
+						<ChartLegend
+							content={<ChartLegendContent nameKey="gr_descricao" />}
+							className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+						/>
 					</BarChart>
 				</ChartContainer>
 			</CardContent>
