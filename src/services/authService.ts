@@ -1,3 +1,4 @@
+import { MembroDataType } from "@/types/membros"
 import api from "../http/api"
 
 interface AuthData {
@@ -6,24 +7,16 @@ interface AuthData {
 	token_type: string
 }
 
-export interface User {
-	name: string
-	role: string
-}
-
 export const authenticate = async (): Promise<{
 	authData: AuthData
-	user: User
+	user: MembroDataType | null
 }> => {
 	const { data } = await api.post("/autenticacao", {
 		client_id: import.meta.env.VITE_CLIENT_ID,
-		client_secret: import.meta.env.VITE_CLIENT_SECRET
+		client_secret: import.meta.env.VITE_CLIENT_SECRET,
 	})
 
-	const user: User = {
-		name: "João Silva",
-		role: "Participante"
-	}
+	const user: MembroDataType = null
 
 	return { authData: data, user: user }
 }
@@ -40,6 +33,6 @@ export const login = async (email: string, otp: string) => {
 	// This is a mock login function, it will be replaced with the actual login logic
 	console.log(email, otp)
 	return {
-		token: "mock-token"
+		token: "mock-token",
 	}
 }

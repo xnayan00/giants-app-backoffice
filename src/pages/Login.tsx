@@ -2,23 +2,16 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { toast } from "sonner"
-import {
-	autenticacaoToken,
-	authenticate,
-	login,
-	validarToken
-} from "@/services/authService"
+import { authenticate } from "@/services/authService"
 import { useAuth } from "@/contexts/AuthContext"
 
 export default function Login() {
 	const navigate = useNavigate()
 	const [step, setStep] = useState<"credentials" | "otp">("credentials")
 	const [email, setEmail] = useState("")
-	const [password, setPassword] = useState("")
 	const [otp, setOtp] = useState("")
 	const [loading, setLoading] = useState(false)
-	const { login } = useAuth()
+	const { login, autenticacaoToken, validarToken } = useAuth()
 
 	const handleCredentialsSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
@@ -26,11 +19,7 @@ export default function Login() {
 
 		autenticacaoToken(email)
 			.then(() => {
-				toast.success("Código enviado para seu email")
 				setStep("otp")
-			})
-			.catch(() => {
-				toast.error("Erro ao enviar código. Tente novamente.")
 			})
 			.finally(() => {
 				setLoading(false)
@@ -43,11 +32,7 @@ export default function Login() {
 
 		validarToken(email, otp)
 			.then(() => {
-				toast.success("Login realizado com sucesso!")
 				navigate("/dashboard")
-			})
-			.catch(() => {
-				toast.error("Código inválido. Tente novamente.")
 			})
 			.finally(() => {
 				setLoading(false)

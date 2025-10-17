@@ -1,19 +1,12 @@
+import { useAuth } from "@/contexts/AuthContext"
 import { useNavigate } from "react-router-dom"
 
 export default function Profile() {
 	const navigate = useNavigate()
+	const { user } = useAuth()
 
-	const user = {
-		name: "João Silva",
-		email: "joao.silva@exemplo.com",
-		role: "Participante",
-		memberSince: "Janeiro 2024",
-		stats: {
-			imersoes: 3,
-			encontros: 12,
-			palestras: 28,
-			conexoes: 45
-		}
+	if (!user) {
+		return <div>Carregando...</div>
 	}
 
 	return (
@@ -41,38 +34,26 @@ export default function Profile() {
 						</div>
 						<div>
 							<h2 className="text-2xl font-bold text-foreground">
-								{user.name}
+								{user.pes_nome}
 							</h2>
-							<p className="text-sm text-muted-foreground">{user.email}</p>
-							<p className="text-xs text-muted-foreground mt-1">{user.role}</p>
+							<p className="text-sm text-muted-foreground">{user.pes_email}</p>
 						</div>
-						<button className="px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-smooth flex items-center gap-2">
+						{/* <button className="px-6 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-smooth flex items-center gap-2">
 							<i className="fi fi-ts-edit"></i>
 							Editar Perfil
-						</button>
-					</div>
-
-					<div className="pt-6 border-t border-border space-y-3">
-						<div className="flex items-center justify-between">
-							<span className="text-sm text-muted-foreground">
-								Membro desde
-							</span>
-							<span className="text-sm font-medium text-foreground">
-								{user.memberSince}
-							</span>
-						</div>
+						</button> */}
 					</div>
 				</div>
 
 				{/* Stats Grid */}
-				<div className="grid grid-cols-2 gap-4">
+				{/* <div className="grid grid-cols-2 gap-4">
 					<div className="card-premium p-4 space-y-2">
 						<div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
 							<i className="fi fi-ts-diploma text-primary"></i>
 						</div>
 						<div>
 							<p className="text-2xl font-bold text-foreground">
-								{user.stats.imersoes}
+								{user.pes_}
 							</p>
 							<p className="text-xs text-muted-foreground">Imersões</p>
 						</div>
@@ -113,7 +94,7 @@ export default function Profile() {
 							<p className="text-xs text-muted-foreground">Conexões</p>
 						</div>
 					</div>
-				</div>
+				</div> */}
 
 				{/* Settings */}
 				<div className="space-y-3">
@@ -134,8 +115,10 @@ export default function Profile() {
 
 						<button className="w-full card-premium p-4 flex items-center justify-between transition-smooth hover:bg-surface-hover">
 							<div className="flex items-center gap-3">
-								<i className="fi fi-ts-shield text-foreground"></i>
-								<span className="text-foreground font-medium">Privacidade</span>
+								<i className="fi fi-ts-skill-user text-foreground"></i>
+								<span className="text-foreground font-medium">
+									Enviar Feedback
+								</span>
 							</div>
 							<i className="fi fi-ts-angle-right text-muted-foreground"></i>
 						</button>
