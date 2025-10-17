@@ -3,15 +3,23 @@ import { EventoBottomSheet } from "@/components/EventoBottomSheet"
 import { getCalendarioAction } from "@/services/eventsService"
 import { EventoDataType } from "@/types/events"
 import { getDate, getTime } from "@/utils/formatDate"
-import { Image } from "lucide-react"
+import { isFuture, isPast, isThisMonth, isThisWeek } from "date-fns"
 import { useEffect, useState } from "react"
 import patternBg from "@/assets/pattern-bg.png"
+import Icon from "@/components/Icon"
 
 export default function Eventos() {
 	const [eventos, setEventos] = useState<EventoDataType[]>([])
 	const [selectedEvento, setSelectedEvento] = useState<EventoDataType | null>(
-		null
+		null,
 	)
+
+	const [search, setSearch] = useState("")
+	const [dateFilter, setDateFilter] = useState("todos")
+	const [participationFilter, setParticipationFilter] = useState("todos")
+	const [periodFilter, setPeriodFilter] = useState("todos-periodos")
+
+	const [filteredEventos, setFilteredEventos] = useState<EventoDataType[]>([])
 
 	useEffect(() => {
 		getCalendarioAction({ pes_id: 198 })
@@ -23,48 +31,94 @@ export default function Eventos() {
 			})
 	}, [])
 
+	useEffect(() => {
+		const filtered = eventos
+			.filter((evento) => {
+				if (!search) return true
+				return evento.descricao.toLowerCase().includes(search.toLowerCase())
+			})
+			.filter((evento) => {
+				if (dateFilter === "proximos")
+					return isFuture(new Date(evento.data_inicio))
+				if (dateFilter === "passados")
+					return isPast(new Date(evento.data_inicio))
+				return true
+			})
+			// .filter((evento) => {
+			// 	if (participationFilter === "confirmado")
+			// 		return evento.participacao === "Confirmado"
+			// 	if (participationFilter === "aguardando")
+			// 		return evento.participacao === "Aguardando"
+			// 	return true
+			// })
+			.filter((evento) => {
+				if (periodFilter === "esta-semana")
+					return isThisWeek(new Date(evento.data_inicio))
+				if (periodFilter === "este-mes")
+					return isThisMonth(new Date(evento.data_inicio))
+				return true
+			})
+
+		setFilteredEventos(filtered)
+	}, [eventos, search, dateFilter, participationFilter, periodFilter])
+
 	return (
-		<div className="app-container">
+		<div className="app-container bg-transparent">
 			{/* Header */}
-			<header className="bg-surface-elevated border-b border-border p-6">
-				<h1 className="text-2xl font-bold text-foreground text-center">
-					Eventos
+			<header className="fixed top-0 w-full pt-10 -z-10">
+				<h1 className="text-[1.2rem] font-bold tracking-[1.5em] bg-gradient-to-t from-transparent to-muted-foreground bg-clip-text text-transparent text-center mr-[-1em]">
+					EVENTOS
 				</h1>
 			</header>
 
-			{/* Search and Filters */}
-			<div className="p-6 pb-4 space-y-4">
-				<div className="relative">
-					<i className="fi fi-ts-search absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"></i>
-					<input
-						type="text"
-						placeholder="Pesquisar Palavra"
-						className="w-full h-12 pl-12 pr-4 bg-surface border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-smooth"
-					/>
-				</div>
-
-				{/* Filters */}
-				<div className="grid grid-cols-3 gap-2">
-					<select className="h-12 px-3 bg-surface border border-border rounded-xl text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-smooth">
-						<option>Próximos</option>
-						<option>Passados</option>
-					</select>
-					<select className="h-12 px-3 bg-surface border border-border rounded-xl text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-smooth">
-						<option>Participação</option>
-						<option>Confirmado</option>
-						<option>Aguardando</option>
-					</select>
-					<select className="h-12 px-3 bg-surface border border-border rounded-xl text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-smooth">
-						<option>Período</option>
-						<option>Esta semana</option>
-						<option>Este mês</option>
-					</select>
-				</div>
-			</div>
-
 			{/* Events List */}
-			<main className="px-6 pb-6 space-y-4 animate-fade-in">
-				{eventos.map((evento, index) => (
+			<main className="px-6 pt-10 pb-6 mt-[4rem] space-y-4 animate-fade-in bg-gradient-to-b from-transparent to-black to-[50px] z-20">
+				{/* Search and Filters */}
+				<div className="space-y-4">
+					<div className="flex items-center gap-1 border rounded-xl bg-surface px-4">
+						<Icon
+							name="search"
+							color="#555"
+						/>
+						<input
+							type="text"
+							placeholder="Pesquisar Palavra"
+							value={search}
+							onChange={(e) => setSearch(e.target.value)}
+							className="w-full h-12 px-2 bg-transparent rounded-xl text-foreground placeholder:text-muted-foreground outline-none transition-smooth"
+						/>
+					</div>
+					{/* <div className="grid grid-cols-3 gap-2">
+					<select
+						value={dateFilter}
+						onChange={(e) => setDateFilter(e.target.value)}
+						className="h-12 px-3 bg-surface border border-border rounded-xl text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-smooth"
+					>
+						<option value="todos">Todos</option>
+						<option value="proximos">Próximos</option>
+						<option value="passados">Passados</option>
+					</select>
+					<select
+						value={participationFilter}
+						onChange={(e) => setParticipationFilter(e.target.value)}
+						className="h-12 px-3 bg-surface border border-border rounded-xl text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-smooth"
+					>
+						<option value="todos">Participação</option>
+						<option value="confirmado">Confirmado</option>
+						<option value="aguardando">Aguardando</option>
+					</select>
+					<select
+						value={periodFilter}
+						onChange={(e) => setPeriodFilter(e.target.value)}
+						className="h-12 px-3 bg-surface border border-border rounded-xl text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-smooth"
+					>
+						<option value="todos-periodos">Período</option>
+						<option value="esta-semana">Esta semana</option>
+						<option value="este-mes">Este mês</option>
+					</select>
+				</div> */}
+				</div>
+				{filteredEventos.map((evento, index) => (
 					<div
 						key={evento.id}
 						className="card-elevated overflow-hidden transition-smooth hover:scale-[1.01] cursor-pointer"

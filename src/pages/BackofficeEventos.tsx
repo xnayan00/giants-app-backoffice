@@ -5,9 +5,16 @@ import { getCalendarioAction } from "@/services/eventsService"
 import { EventoDataType } from "@/types/events"
 import { useEffect, useState } from "react"
 import patternBg from "@/assets/pattern-bg.png"
+import { isFuture, isPast, isThisMonth, isThisWeek } from "date-fns"
 
 export default function BackofficeEventos() {
 	const [eventos, setEventos] = useState<EventoDataType[]>([])
+	const [filteredEventos, setFilteredEventos] = useState<EventoDataType[]>([])
+
+	const [search, setSearch] = useState("")
+	const [inscriptionFilter, setInscriptionFilter] = useState("todos")
+	const [statusFilter, setStatusFilter] = useState("proximos")
+	const [periodFilter, setPeriodFilter] = useState("todos")
 
 	useEffect(() => {
 		getCalendarioAction({ emp_id: 198 })
@@ -18,6 +25,52 @@ export default function BackofficeEventos() {
 				console.log(error)
 			})
 	}, [])
+
+	useEffect(() => {
+		const filtered = eventos
+			.filter((evento) => {
+				if (!search) return true
+				return evento.descricao.toLowerCase().includes(search.toLowerCase())
+			})
+			.filter((evento) => {
+				if (statusFilter === "proximos") return isFuture(new Date(evento.data_inicio))
+				if (statusFilter === "encerrados") return isPast(new Date(evento.data_inicio))
+				return true
+			})
+			.filter((evento) => {
+				if (inscriptionFilter === "pendentes") return evento.pendentes > 0
+				if (inscriptionFilter === "inscrito") return evento.inscritos > 0
+				if (inscriptionFilter === "disponivel") return evento.inscritos === 0
+				return true
+			})
+			.filter((evento) => {
+				if (periodFilter === "proximos-3-meses") {
+					const today = new Date()
+					const threeMonthsLater = new Date()
+					threeMonthsLater.setMonth(today.getMonth() + 3)
+					return new Date(evento.data_inicio) <= threeMonthsLater
+				}
+				if (periodFilter === "ano-passado") {
+					const lastYear = new Date().getFullYear() - 1
+					return new Date(evento.data_inicio).getFullYear() === lastYear
+				}
+				if (periodFilter === "mes-passado") {
+					const lastMonth = new Date().getMonth() - 1
+					return new Date(evento.data_inicio).getMonth() === lastMonth
+				}
+				if (periodFilter === "proximo-mes") {
+					const nextMonth = new Date().getMonth() + 1
+					return new Date(evento.data_inicio).getMonth() === nextMonth
+				}
+				if (periodFilter === "este-ano") {
+					const thisYear = new Date().getFullYear()
+					return new Date(evento.data_inicio).getFullYear() === thisYear
+				}
+				return true
+			})
+
+		setFilteredEventos(filtered)
+	}, [eventos, search, inscriptionFilter, statusFilter, periodFilter])
 
 	return (
 		<div className="space-y-6 animate-fade-in">
@@ -39,33 +92,47 @@ export default function BackofficeEventos() {
 						<input
 							type="text"
 							placeholder="Buscar por nome ou e-mail..."
+							value={search}
+							onChange={(e) => setSearch(e.target.value)}
 							className="w-full pl-10 pr-4 py-2 bg-surface border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
 						/>
 					</div>
 
 					{/* Filtro de Inscrições */}
-					<select className="px-4 py-2 bg-surface border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary">
-						<option>Inscrições pendentes</option>
-						<option>Inscrito</option>
-						<option>Disponível</option>
-						<option>Todos</option>
+					<select
+						value={inscriptionFilter}
+						onChange={(e) => setInscriptionFilter(e.target.value)}
+						className="px-4 py-2 bg-surface border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+					>
+						<option value="pendentes">Inscrições pendentes</option>
+						<option value="inscrito">Inscrito</option>
+						<option value="disponivel">Disponível</option>
+						<option value="todos">Todos</option>
 					</select>
 
 					{/* Filtro de Status */}
-					<select className="px-4 py-2 bg-surface border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary">
-						<option>Próximos</option>
-						<option>Encerrados</option>
-						<option>Todos</option>
+					<select
+						value={statusFilter}
+						onChange={(e) => setStatusFilter(e.target.value)}
+						className="px-4 py-2 bg-surface border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+					>
+						<option value="proximos">Próximos</option>
+						<option value="encerrados">Encerrados</option>
+						<option value="todos">Todos</option>
 					</select>
 
 					{/* Filtro de Período */}
-					<select className="px-4 py-2 bg-surface border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary">
-						<option>Próximos 3 meses</option>
-						<option>Ano passado</option>
-						<option>Mês passado</option>
-						<option>Próximo mês</option>
-						<option>Este ano</option>
-						<option>Todos</option>
+					<select
+						value={periodFilter}
+						onChange={(e) => setPeriodFilter(e.target.value)}
+						className="px-4 py-2 bg-surface border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+					>
+						<option value="proximos-3-meses">Próximos 3 meses</option>
+						<option value="ano-passado">Ano passado</option>
+						<option value="mes-passado">Mês passado</option>
+						<option value="proximo-mes">Próximo mês</option>
+						<option value="este-ano">Este ano</option>
+						<option value="todos">Todos</option>
 					</select>
 				</div>
 			</div>
@@ -83,12 +150,12 @@ export default function BackofficeEventos() {
 					</div>
 					<div className="flex items-center gap-2 text-sm text-muted-foreground">
 						<i className="fi fi-ts-edit"></i>
-						<span>Encontrados: {eventos.length} Registros</span>
+						<span>Encontrados: {filteredEventos.length} Registros</span>
 					</div>
 				</div>
 
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-					{eventos.map((evento) => {
+					{filteredEventos.map((evento) => {
 						const autorizados =
 							parseInt(evento.autorizados as unknown as string) || 0
 						const recusados =

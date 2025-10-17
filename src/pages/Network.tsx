@@ -6,16 +6,53 @@ import { useEffect, useState } from "react"
 
 export default function Network() {
 	const [membros, setMembros] = useState<MembroDataType[]>([])
+	const [filteredMembros, setFilteredMembros] = useState<MembroDataType[]>([])
+
+	const [search, setSearch] = useState("")
+	const [stateFilter, setStateFilter] = useState("todos")
+	const [segmentFilter, setSegmentFilter] = useState("todos")
+
+	const [states, setStates] = useState<string[]>([])
+	const [segments, setSegments] = useState<string[]>([])
 
 	useEffect(() => {
 		fetchMembrosAction()
 			.then(({ data }) => {
 				setMembros(data.data)
+				const uniqueStates = [
+					...new Set(data.data.map((membro) => membro.estado)),
+				] as string[]
+				const uniqueSegments = [
+					...new Set(data.data.map((membro) => membro.segmento)),
+				] as string[]
+				setStates(uniqueStates)
+				setSegments(uniqueSegments)
 			})
 			.catch((error) => {
 				console.log(error)
 			})
 	}, [])
+
+	useEffect(() => {
+		const filtered = membros
+			.filter((membro) => {
+				if (!search) return true
+				return (
+					membro.pes_nome.toLowerCase().includes(search.toLowerCase()) ||
+					membro.emp_fantasia.toLowerCase().includes(search.toLowerCase())
+				)
+			})
+			.filter((membro) => {
+				if (stateFilter === "todos") return true
+				return membro.estado === stateFilter
+			})
+			.filter((membro) => {
+				if (segmentFilter === "todos") return true
+				return membro.segmento === segmentFilter
+			})
+
+		setFilteredMembros(filtered)
+	}, [membros, search, stateFilter, segmentFilter])
 
 	return (
 		<div className="app-container">
@@ -33,31 +70,44 @@ export default function Network() {
 					<input
 						type="text"
 						placeholder="Pesquisar Usuário ou Empresa"
+						value={search}
+						onChange={(e) => setSearch(e.target.value)}
 						className="w-full h-12 pl-12 pr-4 bg-surface border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-smooth"
 					/>
 				</div>
 
 				{/* Filters */}
 				<div className="grid grid-cols-2 gap-3">
-					<select className="h-12 px-4 bg-surface border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-smooth">
-						<option>Estado</option>
-						<option>São Paulo</option>
-						<option>Rio de Janeiro</option>
-						<option>Mato Grosso</option>
-						<option>Goiás</option>
+					<select
+						value={stateFilter}
+						onChange={(e) => setStateFilter(e.target.value)}
+						className="h-12 px-4 bg-surface border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-smooth"
+					>
+						<option value="todos">Estado</option>
+						{states.map((state) => (
+							<option key={state} value={state}>
+								{state}
+							</option>
+						))}
 					</select>
-					<select className="h-12 px-4 bg-surface border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-smooth">
-						<option>Segmento</option>
-						<option>Tecnologia</option>
-						<option>Saúde</option>
-						<option>Brindes</option>
+					<select
+						value={segmentFilter}
+						onChange={(e) => setSegmentFilter(e.target.value)}
+						className="h-12 px-4 bg-surface border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-accent transition-smooth"
+					>
+						<option value="todos">Segmento</option>
+						{segments.map((segment) => (
+							<option key={segment} value={segment}>
+								{segment}
+							</option>
+						))}
 					</select>
 				</div>
 			</div>
 
 			{/* Network List */}
 			<main className="px-6 pb-6 space-y-3 animate-fade-in">
-				{membros.map((membro, index) => (
+				{filteredMembros.map((membro, index) => (
 					<div
 						key={membro.pes_id}
 						className="card-elevated p-5 transition-smooth hover:scale-[1.01]"

@@ -20,6 +20,8 @@ interface Log {
 
 export default function BackofficeLogs() {
 	const [logs, setLogs] = useState<CompanyLogsDataType[]>([])
+	const [filteredLogs, setFilteredLogs] = useState<CompanyLogsDataType[]>([])
+	const [filter, setFilter] = useState("todos")
 
 	useEffect(() => {
 		getLogs(198)
@@ -30,6 +32,14 @@ export default function BackofficeLogs() {
 				console.error(error)
 			})
 	}, [])
+
+	useEffect(() => {
+		const filtered = logs.filter((log) => {
+			if (filter === "todos") return true
+			return log.detalhes.toLowerCase().includes(filter.slice(0, -1))
+		})
+		setFilteredLogs(filtered)
+	}, [logs, filter])
 
 	return (
 		<div className="space-y-6 animate-fade-in">
@@ -44,7 +54,7 @@ export default function BackofficeLogs() {
 
 			{/* Filtro */}
 			<div className="card-elevated p-4">
-				<Select>
+				<Select onValueChange={setFilter} value={filter}>
 					<SelectTrigger className="w-full bg-surface border-border">
 						<SelectValue placeholder="Filtro" />
 					</SelectTrigger>
@@ -70,7 +80,7 @@ export default function BackofficeLogs() {
 						</div>
 						<div className="flex items-center gap-2 text-sm text-muted-foreground">
 							<i className="fi fi-ts-edit"></i>
-							<span>Encontrados: {logs.length} Registros</span>
+							<span>Encontrados: {filteredLogs.length} Registros</span>
 						</div>
 					</div>
 				</div>
@@ -94,7 +104,7 @@ export default function BackofficeLogs() {
 							</tr>
 						</thead>
 						<tbody className="divide-y divide-border">
-							{logs.map((log, index) => (
+							{filteredLogs.map((log, index) => (
 								<tr
 									key={index}
 									className="hover:bg-surface-hover transition-colors"

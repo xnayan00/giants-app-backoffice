@@ -1,29 +1,45 @@
 import { useNavigate } from "react-router-dom"
 import { Card, CardContent } from "@/components/ui/card"
 import { AppBar } from "@/components/AppBar"
+import { useAuth } from "@/contexts/AuthContext"
+import { useEffect, useState } from "react"
+import { getConsumoEmpresa } from "@/services/companyService"
+import { EmpresaConsumo } from "@/types/company"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const Progresso = () => {
 	const navigate = useNavigate()
+	const { user } = useAuth()
 
-	// Mock user data
+	const [consumo, setConsumo] = useState<EmpresaConsumo[]>([])
+	const [loading, setLoading] = useState(true)
+	const [error, setError] = useState<string | null>(null)
+
+	useEffect(() => {
+		if (user?.emp_id) {
+			getConsumoEmpresa(user.emp_id)
+				.then((response) => {
+					setConsumo(response.data)
+					setLoading(false)
+				})
+				.catch(() => {
+					setError("Erro ao buscar dados de consumo.")
+					setLoading(false)
+				})
+		}
+	}, [user])
+
 	const userData = {
-		name: "Yan Ricardo Mendes",
-		cycle: "Ciclo 7 — Legado em Construção.",
-		cycleNumber: "7°",
-		message:
-			"Sua história no Giants já é parte da história do próprio programa. Que orgulho dessa trajetória!"
+		name: user?.pes_nome || "Usuário",
+		cycle: `Sua empresa está no ${user?.pes_ciclo || "N/A"}º Ciclo`,
+		cycleNumber: `${user?.pes_ciclo || "N/A"}°`,
 	}
 
-	const stats = [
-		{ label: "Imersões", value: 145 },
-		{ label: "Encontros", value: 3 },
-		{ label: "Experience", value: 2 },
-		{ label: "Porsche Cup", value: 2 },
-		{ label: "Mentorias In Company", value: 2 },
-		{ label: "Mentorias Online", value: 73 },
-		{ label: "1:1 com o Marcus", value: 0 },
-		{ label: "Confraria", value: 3 }
-	]
+	const stats =
+		consumo.map((item) => ({
+			label: item.grupo,
+			value: Number(item.consumido),
+		})) || []
 
 	return (
 		<div className="app-container min-h-screen bg-background pb-24">
@@ -69,9 +85,6 @@ const Progresso = () => {
 									<p className="text-sm font-semibold text-muted-foreground">
 										{userData.cycle}
 									</p>
-									<p className="text-sm text-muted-foreground leading-relaxed">
-										{userData.message}
-									</p>
 								</div>
 							</div>
 						</div>
@@ -79,31 +92,53 @@ const Progresso = () => {
 				</Card>
 
 				{/* Stats Grid */}
-				<div className="grid grid-cols-2 gap-3">
-					{stats.map((stat, index) => (
-						<Card
-							key={index}
-							className="bg-surface border-border"
-						>
-							<CardContent className="p-4 space-y-3">
-								<div className="h-1 bg-muted/30 rounded-full">
-									<div className="h-full bg-primary/20 rounded-full w-1/3"></div>
-								</div>
-								<div className="space-y-1">
-									<p className="text-4xl font-bold text-muted-foreground">
-										{stat.value}
-									</p>
-									<p className="text-sm text-muted-foreground">
+				{loading ? (
+					<div className="grid grid-cols-2 gap-3">
+						{Array.from({ length: 8 }).map((_, index) => (
+							<Card
+								key={index}
+								className="bg-surface border-border"
+							>
+								<CardContent className="p-4 space-y-3">
+									<Skeleton className="h-1 w-full rounded-full bg-muted/30" />
+									<div className="space-y-1">
+										<Skeleton className="h-9 w-1/2 bg-muted/30" />
+										<Skeleton className="h-4 w-full bg-muted/30" />
+										<Skeleton className="h-4 w-2/3 bg-muted/30" />
+									</div>
+								</CardContent>
+							</Card>
+						))}
+					</div>
+				) : error ? (
+					<div className="text-red-500 text-center">{error}</div>
+				) : (
+					<div className="grid grid-cols-2 gap-3">
+						{stats.map((stat, index) => (
+							<Card
+								key={index}
+								className="bg-surface border-border"
+							>
+								<CardContent className="p-4 space-y-3">
+									<p className="text-xs text-muted-foreground">
 										Sua empresa participou de
 									</p>
-									<p className="text-sm font-medium text-foreground">
-										{stat.label}
-									</p>
-								</div>
-							</CardContent>
-						</Card>
-					))}
-				</div>
+									{/* <div className="h-1 bg-muted/30 rounded-full">
+										<div className="h-full bg-primary/20 rounded-full w-1/3"></div>
+									</div> */}
+									<div className="space-y-1">
+										<p className="text-4xl font-bold text-muted-foreground">
+											{stat.value}
+										</p>
+										<p className="text-sm font-medium text-foreground">
+											{stat.label}
+										</p>
+									</div>
+								</CardContent>
+							</Card>
+						))}
+					</div>
+				)}
 			</div>
 
 			<AppBar />

@@ -16,6 +16,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 export default function BackofficeUsuarios() {
 	const [users, setUsers] = useState<PessoaDataType[]>([])
 	const [loading, setLoading] = useState(true)
+	const [filteredUsers, setFilteredUsers] = useState<PessoaDataType[]>([])
+	const [filter, setFilter] = useState("todos")
 
 	useEffect(() => {
 		getPessoas(198)
@@ -29,6 +31,16 @@ export default function BackofficeUsuarios() {
 				setLoading(false)
 			})
 	}, [])
+
+	useEffect(() => {
+		const filtered = users.filter((user) => {
+			if (filter === "todos") return true
+			if (filter === "ativos") return user.ativo
+			if (filter === "inativos") return !user.ativo
+			return true
+		})
+		setFilteredUsers(filtered)
+	}, [users, filter])
 
 	return (
 		<div className="space-y-6 animate-fade-in">
@@ -55,8 +67,7 @@ export default function BackofficeUsuarios() {
 
 			{/* Filtro */}
 			<div className="card-elevated p-4">
-				<Select>
-					{users[0]?.pes_nome}
+				<Select onValueChange={setFilter} value={filter}>
 					<SelectTrigger className="w-full bg-surface border-border">
 						<SelectValue placeholder="Filtro" />
 					</SelectTrigger>
@@ -72,7 +83,7 @@ export default function BackofficeUsuarios() {
 			<div className="card-elevated overflow-hidden">
 				<div className="p-6 border-b border-border">
 					<h2 className="text-lg font-semibold text-foreground">
-						Usuários ({users.length})
+						Usuários ({filteredUsers.length})
 					</h2>
 					<p className="text-sm text-muted-foreground">
 						Lista de todos os usuários cadastrados no programa
@@ -89,7 +100,7 @@ export default function BackofficeUsuarios() {
 				) : (
 					<DataTable
 						columns={columns}
-						data={users}
+						data={filteredUsers}
 					/>
 				)}
 			</div>
