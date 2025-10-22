@@ -1,9 +1,12 @@
 import { AppBar } from "@/components/AppBar"
 import { PalestraBottomSheet } from "@/components/PalestraBottomSheet"
+import PageHeader from "@/components/reusable/PageHeader"
+import PageMainContainer from "@/components/reusable/PageMainContainer"
 import { getPalestras } from "@/services/eventsService"
 import { PalestraDataType } from "@/types/events"
 import { getYoutubeThumbnail } from "@/utils/getYoutubeThumbnail"
 import React from "react"
+import { useLoading } from "@/hooks/useLoading"
 import { useState, useEffect } from "react"
 
 export default function Palestras() {
@@ -11,36 +14,35 @@ export default function Palestras() {
 	const [palestras, setPalestras] = useState<PalestraDataType[]>([])
 	const [selectedPalestra, setSelectedPalestra] =
 		useState<PalestraDataType | null>(null)
+	const { showLoading, hideLoading } = useLoading()
 
 	useEffect(() => {
+		showLoading()
+
 		getPalestras()
 			.then(({ data }) => {
 				setPalestras(data)
-			const categoriasUnicasEmUmaLinha = [
-				...new Set(data.map((palestra) => palestra.categoria))
-			] as string[]
+				const categoriasUnicasEmUmaLinha = [
+					...new Set(data.map((palestra) => palestra.categoria)),
+				] as string[]
 
-			setCategorias(categoriasUnicasEmUmaLinha)
+				setCategorias(categoriasUnicasEmUmaLinha)
 			})
 			.catch((error) => {
 				console.error("Error fetching lectures:", error)
 			})
+			.finally(() => {
+				hideLoading()
+			})
 	}, [])
 
 	return (
-		<div className="app-container">
+		<div className="app-container bg-transparent">
 			{/* Header */}
-			<header className="bg-surface-elevated border-b border-border p-6 space-y-3">
-				<h1 className="text-2xl font-bold text-foreground text-center">
-					Palestras
-				</h1>
-				<p className="text-lg text-center text-foreground/90 leading-relaxed px-4">
-					Não se preocupe com as falhas, você só precisa acertar uma vez.
-				</p>
-			</header>
+			<PageHeader pageName="palestras" />
 
 			{/* Categories and Lectures */}
-			<main className="p-6 pb-24 space-y-8 animate-fade-in">
+			<PageMainContainer>
 				{categorias.map((categoria, categoryIndex) => (
 					<section
 						key={categoria}
@@ -59,7 +61,7 @@ export default function Palestras() {
 										<div
 											className="card-elevated overflow-hidden flex-shrink-0 w-[280px] transition-smooth hover:scale-[1.02] cursor-pointer"
 											style={{
-												animationDelay: `${(categoryIndex * 3 + index) * 0.1}s`
+												animationDelay: `${(categoryIndex * 3 + index) * 0.1}s`,
 											}}
 											onClick={() => setSelectedPalestra(palestra)}
 										>
@@ -83,7 +85,7 @@ export default function Palestras() {
 						</div>
 					</section>
 				))}
-			</main>
+			</PageMainContainer>
 
 			<AppBar />
 

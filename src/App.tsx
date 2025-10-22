@@ -7,6 +7,7 @@ import { MobileDetector } from "@/components/MobileDetector"
 import Login from "./pages/Login"
 import Dashboard from "./pages/Dashboard"
 import Eventos from "./pages/Eventos"
+import Mentoring from "./pages/Mentoring"
 import Palestras from "./pages/Palestras"
 import Network from "./pages/Network"
 import Profile from "./pages/Profile"
@@ -77,6 +78,14 @@ const App = () => (
 							element={
 								<MobileDetector>
 									<Network />
+								</MobileDetector>
+							}
+						/>
+						<Route
+							path="/mentoring"
+							element={
+								<MobileDetector>
+									<Mentoring />
 								</MobileDetector>
 							}
 						/>

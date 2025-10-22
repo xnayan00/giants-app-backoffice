@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import logoGiants from "@/assets/logo-horizontal-white.svg"
 import { useEffect, useState } from "react"
 import { getCalendarioAction } from "@/services/eventsService"
-import { getConsumoEmpresa, getMentores } from "@/services/companyService"
+import { getConsumoEmpresa } from "@/services/companyService"
 import { EventoDataType } from "@/types/events"
 import { formatDate } from "@/utils/formatDate"
 import { EmpresaConsumo } from "@/types/company"
@@ -60,10 +60,6 @@ export default function Dashboard() {
 					setCurrentMember(data.data[0])
 				})
 				.catch((error) => console.log("Erro ao buscar membro:", error)),
-
-			getMentores(198)
-				.then(({ data }) => console.log("Mentores:", data))
-				.catch((error) => console.log("Erro ao buscar mentores:", error)),
 		]
 
 		Promise.allSettled(promises).then(() => {

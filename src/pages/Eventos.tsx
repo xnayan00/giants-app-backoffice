@@ -7,6 +7,9 @@ import { isFuture, isPast, isThisMonth, isThisWeek } from "date-fns"
 import { useEffect, useState } from "react"
 import patternBg from "@/assets/pattern-bg.png"
 import Icon from "@/components/Icon"
+import PageHeader from "@/components/reusable/PageHeader"
+import PageMainContainer from "@/components/reusable/PageMainContainer"
+import App from "@/App"
 
 export default function Eventos() {
 	const [eventos, setEventos] = useState<EventoDataType[]>([])
@@ -70,24 +73,13 @@ export default function Eventos() {
 	return (
 		<div className="app-container bg-transparent">
 			{/* Header */}
-			<header className="animate-slide-down fixed top-0 w-full pt-10 -z-10">
-				<h1 className="text-[1.2rem] font-bold tracking-[1.5em] bg-gradient-to-t from-transparent to-muted-foreground bg-clip-text text-transparent text-center mr-[-1em]">
-					EVENTOS
-				</h1>
-			</header>
+			<PageHeader pageName="eventos" />
 
 			{/* Events List */}
-			<main className="px-6 pt-10 pb-6 mt-[4rem] space-y-4 animate-fade-in bg-gradient-to-b from-transparent to-black to-[50px] z-20">
+			<PageMainContainer>
 				{/* Search and Filters */}
 				<div className="space-y-4">
-					<div
-						className="flex items-center gap-1 bg-muted-foreground/10 px-4"
-						style={{
-							boxShadow: focusShadow,
-							transition: "box-shadow 160ms ease, transform 160ms ease",
-							WebkitTapHighlightColor: "transparent",
-						}}
-					>
+					<div className="flex items-center gap-1 bg-muted-foreground/10 px-4">
 						<Icon
 							name="search"
 							color="#555"
@@ -133,12 +125,12 @@ export default function Eventos() {
 				{filteredEventos.map((evento, index) => (
 					<div
 						key={evento.id}
-						className="card-elevated overflow-hidden transition-smooth hover:scale-[1.01] cursor-pointer"
+						className="card-elevated bg-muted-foreground/10 overflow-hidden transition-smooth hover:scale-[1.01] cursor-pointer"
 						style={{ animationDelay: `${index * 0.1}s` }}
 						onClick={() => setSelectedEvento(evento)}
 					>
 						{/* Date/Time Badge */}
-						<div className="flex items-center justify-center gap-3 py-3 px-4 bg-surface-elevated border-b border-border">
+						<div className="flex items-center justify-center gap-3 py-3 px-4 bg-muted-foreground/10 border-b border-border">
 							<div className="flex items-center gap-1.5 text-sm text-muted-foreground">
 								<i className="fi fi-ts-calendar"></i>
 								<span>{getDate(evento.data_inicio)}</span>
@@ -210,7 +202,7 @@ export default function Eventos() {
 						</div>
 					</div>
 				))}
-			</main>
+			</PageMainContainer>
 
 			<AppBar />
 

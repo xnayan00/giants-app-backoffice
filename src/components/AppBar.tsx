@@ -7,10 +7,15 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-	{ path: "/dashboard", label: "Dashboard", icon: "house-chimney" },
 	{ path: "/eventos", label: "Eventos", icon: "fi fi-ts-calendar" },
 	{ path: "/palestras", label: "Palestras", icon: "fi fi-ts-presentation" },
-	{ path: "/network", label: "Network", icon: "fi fi-ts-users" },
+	{ path: "/dashboard", label: "", icon: "house-chimney" },
+	{ path: "/network", label: "Network", icon: "fi fi-ts-network-analytic" },
+	{
+		path: "/mentoring",
+		label: "Mentorias",
+		icon: "fi fi-ts-bubble-discussion",
+	},
 ]
 
 export const AppBar = () => {
@@ -24,7 +29,7 @@ export const AppBar = () => {
 	return (
 		<>
 			<nav className="fixed bottom-0 left-0 right-0 mx-5 mb-3 bg-[rgba(15,15,15,.7)] border-t rounded-xl border-[#555555] backdrop-blur-sm z-40">
-				<div className="grid grid-cols-4 h-16">
+				<div className="grid grid-cols-5 h-16">
 					{navItems.map((item) => (
 						<NavLink
 							key={item.path}
