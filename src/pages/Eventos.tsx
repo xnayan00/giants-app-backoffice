@@ -193,10 +193,6 @@ export default function Eventos() {
 											+{evento.inscritos} Participantes
 										</span>
 									</div>
-
-									<button className="w-12 h-12 rounded-full bg-surface-hover border border-border flex items-center justify-center transition-smooth hover:bg-accent/10 hover:border-accent">
-										<i className="fi fi-ts-plus text-lg text-foreground"></i>
-									</button>
 								</div>
 							</div>
 						</div>

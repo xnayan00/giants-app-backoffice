@@ -3,12 +3,14 @@ import {
 	Drawer,
 	DrawerContent,
 	DrawerHeader,
-	DrawerTitle
+	DrawerTitle,
 } from "@/components/ui/drawer"
 import { EventoDataType } from "@/types/events"
 import { Button } from "./ui/button"
 import { Calendar, Clock, MapPin, Users } from "lucide-react"
 import patternBg from "@/assets/pattern-bg.png"
+import { subscribeEvent } from "@/services/eventsService"
+import { toast } from "@/hooks/use-toast"
 
 interface EventoBottomSheetProps {
 	open: boolean
@@ -19,10 +21,32 @@ interface EventoBottomSheetProps {
 export function EventoBottomSheet({
 	open,
 	onOpenChange,
-	evento
+	evento,
 }: EventoBottomSheetProps) {
 	if (!evento) {
 		return null
+	}
+
+	const handleSubscribeEvent = () => {
+		subscribeEvent({
+			id_pessoa: 198,
+			id_produto: evento.id,
+			turma: evento.turma,
+			origem: evento.origem,
+		})
+			.then(() => {
+				toast({
+					title: "Inscrição realizada com sucesso!",
+					description: `Você foi inscrito no evento: ${evento.descricao}`,
+				})
+				onOpenChange(false)
+			})
+			.catch((error) => {
+				toast({
+					title: "Erro ao tentar se inscrever no evento.",
+				})
+				onOpenChange(false)
+			})
 	}
 
 	return (
@@ -57,7 +81,7 @@ export function EventoBottomSheet({
 								{new Date(evento.data_inicio).toLocaleDateString("pt-BR")} às{" "}
 								{new Date(evento.data_inicio).toLocaleTimeString("pt-BR", {
 									hour: "2-digit",
-									minute: "2-digit"
+									minute: "2-digit",
 								})}
 							</span>
 						</div>
@@ -67,7 +91,7 @@ export function EventoBottomSheet({
 								Fim: {new Date(evento.data_fim).toLocaleDateString("pt-BR")} às{" "}
 								{new Date(evento.data_fim).toLocaleTimeString("pt-BR", {
 									hour: "2-digit",
-									minute: "2-digit"
+									minute: "2-digit",
 								})}
 							</span>
 						</div>
@@ -97,7 +121,7 @@ export function EventoBottomSheet({
 									className="w-8 h-8 overflow-hidden rounded-full bg-accent flex items-center justify-center text-xs border-2 border-surface-elevated"
 								>
 									{pessoa.foto_url === null ? (
-										<>👤</>
+										<i className="fi fi-ts-circle-user flex items-center justify-center text-lg text-white"></i>
 									) : (
 										<img
 											src={pessoa.foto_url}
@@ -109,19 +133,12 @@ export function EventoBottomSheet({
 						</div>
 						<Button variant="outline">Ver todos</Button>
 					</div>
-
-					{!evento.inscrito && evento.link_inscricao && (
+					{!evento.inscrito && (
 						<Button
-							asChild
+							onClick={handleSubscribeEvent}
 							className="w-full"
 						>
-							<a
-								href={evento.link_inscricao}
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								Inscreva-se
-							</a>
+							Inscreva-se
 						</Button>
 					)}
 					{evento.inscrito && (

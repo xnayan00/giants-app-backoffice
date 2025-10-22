@@ -50,3 +50,10 @@ export interface PalestraDataType {
 	categoria: string
 	data: string
 }
+
+export interface EventSubscriptionType {
+	id_pessoa: number
+	id_produto: number
+	turma: number
+	origem: string
+}
