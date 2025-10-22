@@ -12,6 +12,7 @@ import Palestras from "./pages/Palestras"
 import Network from "./pages/Network"
 import Profile from "./pages/Profile"
 import Progresso from "./pages/Progresso"
+import AvaliacaoMentoria from "./pages/AvaliacaoMentoria"
 import BackofficeLogin from "./pages/BackofficeLogin"
 import BackofficeDashboard from "./pages/BackofficeDashboard"
 import BackofficeUsuarios from "./pages/BackofficeUsuarios"
@@ -102,6 +103,14 @@ const App = () => (
 							element={
 								<MobileDetector>
 									<Progresso />
+								</MobileDetector>
+							}
+						/>
+						<Route
+							path="/avaliacao-mentoria"
+							element={
+								<MobileDetector>
+									<AvaliacaoMentoria />
 								</MobileDetector>
 							}
 						/>

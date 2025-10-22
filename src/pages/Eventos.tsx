@@ -179,7 +179,7 @@ export default function Eventos() {
 													className="w-8 h-8 overflow-hidden rounded-full bg-accent flex items-center justify-center text-xs border-2 border-surface-elevated"
 												>
 													{pessoa.foto_url === null ? (
-														<>👤</>
+														<i className="fi fi-ts-circle-user flex items-center justify-center text-lg text-white"></i>
 													) : (
 														<img
 															src={pessoa.foto_url}
