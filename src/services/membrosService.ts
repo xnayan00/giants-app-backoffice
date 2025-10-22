@@ -10,3 +10,7 @@ export const fetchMembrosAction = async (
 
 	return api.get(`/membros${queryString ? `?${queryString}` : ""}`)
 }
+
+export const getMemberById = async (id: number) => {
+	return api.get(`/membros/${id}`)
+}

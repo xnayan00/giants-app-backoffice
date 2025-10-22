@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import { useLoading } from "@/hooks/useLoading"
 import PageHeader from "@/components/reusable/PageHeader"
 import PageMainContainer from "@/components/reusable/PageMainContainer"
+import { NavLink } from "react-router-dom"
 
 export default function Network() {
 	const [membros, setMembros] = useState<MembroDataType[]>([])
@@ -113,42 +114,47 @@ export default function Network() {
 				</div>
 
 				{/* Network List */}
-				<main className="space-y-3 ">
+				<main>
 					{filteredMembros.map((membro, index) => (
-						<div
+						<NavLink
+							to={`/member/${membro.pes_id}`}
 							key={membro.pes_id}
-							className="card-elevated p-5 transition-smooth hover:scale-[1.01]"
-							style={{ animationDelay: `${index * 0.1}s` }}
+							className={"block mb-4 last:mb-0"}
 						>
-							<div className="flex items-center gap-4">
-								{/* Avatar */}
+							<div
+								className="card-elevated p-5 transition-smooth hover:scale-[1.01]"
+								style={{ animationDelay: `${index * 0.1}s` }}
+							>
+								<div className="flex items-center gap-4">
+									{/* Avatar */}
 
-								{membro.pes_foto_url === null ? (
-									<User />
-								) : (
-									<div className="w-16 h-16 overflow-hidden flex-shrink-0 bg-surface rounded-full flex items-center justify-center text-3xl border border-border">
-										<img
-											src={membro.pes_foto_url}
-											alt={membro.pes_nome}
-										/>
-									</div>
-								)}
+									{membro.pes_foto_url === null ? (
+										<User />
+									) : (
+										<div className="w-16 h-16 overflow-hidden flex-shrink-0 bg-surface rounded-full flex items-center justify-center text-3xl border border-border">
+											<img
+												src={membro.pes_foto_url}
+												alt={membro.pes_nome}
+											/>
+										</div>
+									)}
 
-								{/* Info */}
-								<div className="flex-1 min-w-0">
-									<h3 className="text-base font-semibold text-foreground">
-										{membro.pes_nome}
-									</h3>
-									<p className="text-sm text-muted-foreground mt-0.5">
-										{membro.emp_fantasia}
-									</p>
-									<div className="flex items-center gap-1.5 mt-2 text-xs text-muted-foreground">
-										<i className="fi fi-ts-marker"></i>
-										<span>{membro.cidade + " - " + membro.estado}</span>
+									{/* Info */}
+									<div className="flex-1 min-w-0">
+										<h3 className="text-base font-semibold text-foreground">
+											{membro.pes_nome}
+										</h3>
+										<p className="text-sm text-muted-foreground mt-0.5">
+											{membro.emp_fantasia}
+										</p>
+										<div className="flex items-center gap-1.5 mt-2 text-xs text-muted-foreground">
+											<i className="fi fi-ts-marker"></i>
+											<span>{membro.cidade + " - " + membro.estado}</span>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
+						</NavLink>
 					))}
 				</main>
 			</PageMainContainer>

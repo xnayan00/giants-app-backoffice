@@ -13,6 +13,7 @@ import Network from "./pages/Network"
 import Profile from "./pages/Profile"
 import Progresso from "./pages/Progresso"
 import AvaliacaoMentoria from "./pages/AvaliacaoMentoria"
+import MemberDetails from "./pages/MemberDetails"
 import BackofficeLogin from "./pages/BackofficeLogin"
 import BackofficeDashboard from "./pages/BackofficeDashboard"
 import BackofficeUsuarios from "./pages/BackofficeUsuarios"
@@ -111,6 +112,14 @@ const App = () => (
 							element={
 								<MobileDetector>
 									<AvaliacaoMentoria />
+								</MobileDetector>
+							}
+						/>
+						<Route
+							path="/member/:id"
+							element={
+								<MobileDetector>
+									<MemberDetails />
 								</MobileDetector>
 							}
 						/>
