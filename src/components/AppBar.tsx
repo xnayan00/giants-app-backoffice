@@ -9,7 +9,7 @@ interface NavItem {
 const navItems: NavItem[] = [
 	{ path: "/eventos", label: "Eventos", icon: "fi fi-ts-calendar" },
 	{ path: "/palestras", label: "Palestras", icon: "fi fi-ts-presentation" },
-	{ path: "/dashboard", label: "", icon: "house-chimney" },
+	{ path: "/dashboard", label: "Home", icon: "house-chimney" },
 	{ path: "/network", label: "Network", icon: "fi fi-ts-network-analytic" },
 	{
 		path: "/mentoring",
@@ -37,7 +37,7 @@ export const AppBar = () => {
 							className={({ isActive }) =>
 								`flex flex-col items-center justify-center gap-1 transition-smooth ${
 									isActive
-										? "text-primary"
+										? "text-primary rounded-full"
 										: "text-muted-foreground hover:text-foreground"
 								}`
 							}
