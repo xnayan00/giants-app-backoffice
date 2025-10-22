@@ -9,64 +9,66 @@ import { formatDate } from "@/utils/formatDate"
 import { EmpresaConsumo } from "@/types/company"
 import { fetchMembrosAction } from "@/services/membrosService"
 import { MembroDataType } from "@/types/membros"
+import { useLoading } from "@/hooks/useLoading"
 
 export default function Dashboard() {
 	const navigate = useNavigate()
 	const [currentMember, setCurrentMember] = useState<MembroDataType>()
 	const [nextEvent, setNextEvent] = useState<EventoDataType>()
 	const [empresaConsumo, setEmpresaConsumo] = useState<EmpresaConsumo[]>([])
+	const { showLoading, hideLoading } = useLoading()
 
 	useEffect(() => {
-		getCalendarioAction()
-			.then(({ data }) => {
-				const dataAtual = new Date()
+		showLoading()
 
-				const eventosFuturosDisponiveis = data.data.filter((evento) => {
-					const dataInicioEvento = new Date(evento.data_inicio)
-					return dataInicioEvento >= dataAtual && evento.inscrito === false
+		const promises = [
+			getCalendarioAction()
+				.then(({ data }) => {
+					const dataAtual = new Date()
+
+					const eventosFuturosDisponiveis = data.data.filter((evento) => {
+						const dataInicioEvento = new Date(evento.data_inicio)
+						return dataInicioEvento >= dataAtual && evento.inscrito === false
+					})
+
+					const proximoEvento =
+						eventosFuturosDisponiveis.length > 0
+							? eventosFuturosDisponiveis.reduce((maisProximo, eventoAtual) => {
+									const dataMaisProximo = new Date(maisProximo.data_inicio)
+									const dataEventoAtual = new Date(eventoAtual.data_inicio)
+
+									return dataEventoAtual < dataMaisProximo
+										? eventoAtual
+										: maisProximo
+								}, eventosFuturosDisponiveis[0])
+							: null
+
+					setNextEvent(proximoEvento)
 				})
+				.catch((error) => console.log("Erro ao buscar calendário:", error)),
 
-				const proximoEvento =
-					eventosFuturosDisponiveis.length > 0
-						? eventosFuturosDisponiveis.reduce((maisProximo, eventoAtual) => {
-								const dataMaisProximo = new Date(maisProximo.data_inicio)
-								const dataEventoAtual = new Date(eventoAtual.data_inicio)
+			getConsumoEmpresa(198)
+				.then(({ data }) => {
+					setEmpresaConsumo([data[0], data[1]])
+				})
+				.catch((error) =>
+					console.log("Erro ao buscar consumo empresa:", error),
+				),
 
-								return dataEventoAtual < dataMaisProximo
-									? eventoAtual
-									: maisProximo
-							}, eventosFuturosDisponiveis[0])
-						: null
+			fetchMembrosAction({ pes_email: "yan.mendes@grupoacelerador.com.br" })
+				.then(({ data }) => {
+					setCurrentMember(data.data[0])
+				})
+				.catch((error) => console.log("Erro ao buscar membro:", error)),
 
-				setNextEvent(proximoEvento)
-			})
-			.catch((error) => {
-				console.log(error)
-			})
+			getMentores(198)
+				.then(({ data }) => console.log("Mentores:", data))
+				.catch((error) => console.log("Erro ao buscar mentores:", error)),
+		]
 
-		getConsumoEmpresa(198)
-			.then(({ data }) => {
-				setEmpresaConsumo([data[0], data[1]])
-			})
-			.catch((error) => {
-				console.log(error)
-			})
-
-		fetchMembrosAction({ pes_email: "yan.mendes@grupoacelerador.com.br" })
-			.then(({ data }) => {
-				setCurrentMember(data.data[0])
-			})
-			.catch((error) => {
-				console.log(error)
-			})
-
-		getMentores(198)
-			.then(({ data }) => {
-				console.log(data)
-			})
-			.catch((error) => {
-				console.log(error)
-			})
+		Promise.allSettled(promises).then(() => {
+			hideLoading()
+		})
 	}, [])
 
 	return (

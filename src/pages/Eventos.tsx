@@ -62,10 +62,15 @@ export default function Eventos() {
 		setFilteredEventos(filtered)
 	}, [eventos, search, dateFilter, participationFilter, periodFilter])
 
+	const baseShadow =
+		"inset 6px 6px 14px rgba(0,0,0,0.7), inset -6px -6px 14px rgba(255,255,255,0.03)"
+	const focusShadow =
+		"0 8px 30px rgba(99,102,241,0.08), inset 3px 3px 8px rgba(0,0,0,0.7), inset -3px -3px 8px rgba(255,255,255,0.03)"
+
 	return (
 		<div className="app-container bg-transparent">
 			{/* Header */}
-			<header className="fixed top-0 w-full pt-10 -z-10">
+			<header className="animate-slide-down fixed top-0 w-full pt-10 -z-10">
 				<h1 className="text-[1.2rem] font-bold tracking-[1.5em] bg-gradient-to-t from-transparent to-muted-foreground bg-clip-text text-transparent text-center mr-[-1em]">
 					EVENTOS
 				</h1>
@@ -75,14 +80,21 @@ export default function Eventos() {
 			<main className="px-6 pt-10 pb-6 mt-[4rem] space-y-4 animate-fade-in bg-gradient-to-b from-transparent to-black to-[50px] z-20">
 				{/* Search and Filters */}
 				<div className="space-y-4">
-					<div className="flex items-center gap-1 border rounded-xl bg-surface px-4">
+					<div
+						className="flex items-center gap-1 bg-muted-foreground/10 px-4"
+						style={{
+							boxShadow: focusShadow,
+							transition: "box-shadow 160ms ease, transform 160ms ease",
+							WebkitTapHighlightColor: "transparent",
+						}}
+					>
 						<Icon
 							name="search"
 							color="#555"
 						/>
 						<input
 							type="text"
-							placeholder="Pesquisar Palavra"
+							placeholder="Pesquisar evento"
 							value={search}
 							onChange={(e) => setSearch(e.target.value)}
 							className="w-full h-12 px-2 bg-transparent rounded-xl text-foreground placeholder:text-muted-foreground outline-none transition-smooth"

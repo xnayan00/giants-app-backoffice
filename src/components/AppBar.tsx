@@ -10,7 +10,7 @@ const navItems: NavItem[] = [
 	{ path: "/dashboard", label: "Dashboard", icon: "house-chimney" },
 	{ path: "/eventos", label: "Eventos", icon: "fi fi-ts-calendar" },
 	{ path: "/palestras", label: "Palestras", icon: "fi fi-ts-presentation" },
-	{ path: "/network", label: "Network", icon: "fi fi-ts-users" }
+	{ path: "/network", label: "Network", icon: "fi fi-ts-users" },
 ]
 
 export const AppBar = () => {
@@ -20,10 +20,10 @@ export const AppBar = () => {
 
 		return matchPath({ path, end: false }, pathname)
 	}
-	
+
 	return (
 		<>
-			<nav className="fixed bottom-0 left-0 right-0 mx-5 mb-3 bg-[rgba(15,15,15,.7)] border-t rounded-xl border-[#555555] backdrop-blur-sm z-50">
+			<nav className="fixed bottom-0 left-0 right-0 mx-5 mb-3 bg-[rgba(15,15,15,.7)] border-t rounded-xl border-[#555555] backdrop-blur-sm z-40">
 				<div className="grid grid-cols-4 h-16">
 					{navItems.map((item) => (
 						<NavLink
@@ -37,8 +37,14 @@ export const AppBar = () => {
 								}`
 							}
 						>
-							<i className={`fi fi-${checkIsActive(item.path) ? "ss-" : "ts-"}${item.icon} text-xl`}></i>
-							<span className={`text-xs font-${checkIsActive(item.path) ? "bold" : "medium"}`}>{item.label}</span>
+							<i
+								className={`fi fi-${checkIsActive(item.path) ? "ss-" : "ts-"}${item.icon} text-xl`}
+							></i>
+							<span
+								className={`text-xs font-${checkIsActive(item.path) ? "bold" : "medium"}`}
+							>
+								{item.label}
+							</span>
 						</NavLink>
 					))}
 				</div>

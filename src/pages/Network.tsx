@@ -3,10 +3,12 @@ import { fetchMembrosAction } from "@/services/membrosService"
 import { MembroDataType } from "@/types/membros"
 import { User } from "lucide-react"
 import { useEffect, useState } from "react"
+import { useLoading } from "@/hooks/useLoading"
 
 export default function Network() {
 	const [membros, setMembros] = useState<MembroDataType[]>([])
 	const [filteredMembros, setFilteredMembros] = useState<MembroDataType[]>([])
+	const { showLoading, hideLoading } = useLoading()
 
 	const [search, setSearch] = useState("")
 	const [stateFilter, setStateFilter] = useState("todos")
@@ -16,6 +18,7 @@ export default function Network() {
 	const [segments, setSegments] = useState<string[]>([])
 
 	useEffect(() => {
+		showLoading()
 		fetchMembrosAction()
 			.then(({ data }) => {
 				setMembros(data.data)
@@ -31,6 +34,9 @@ export default function Network() {
 			.catch((error) => {
 				console.log(error)
 			})
+			.finally(() => {
+				hideLoading()
+			})
 	}, [])
 
 	useEffect(() => {
@@ -45,10 +51,6 @@ export default function Network() {
 			.filter((membro) => {
 				if (stateFilter === "todos") return true
 				return membro.estado === stateFilter
-			})
-			.filter((membro) => {
-				if (segmentFilter === "todos") return true
-				return membro.segmento === segmentFilter
 			})
 
 		setFilteredMembros(filtered)
@@ -85,7 +87,10 @@ export default function Network() {
 					>
 						<option value="todos">Estado</option>
 						{states.map((state) => (
-							<option key={state} value={state}>
+							<option
+								key={state}
+								value={state}
+							>
 								{state}
 							</option>
 						))}
@@ -97,7 +102,10 @@ export default function Network() {
 					>
 						<option value="todos">Segmento</option>
 						{segments.map((segment) => (
-							<option key={segment} value={segment}>
+							<option
+								key={segment}
+								value={segment}
+							>
 								{segment}
 							</option>
 						))}
