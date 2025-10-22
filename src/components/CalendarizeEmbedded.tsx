@@ -1,10 +1,11 @@
 import Cal, { getCalApi } from "@calcom/embed-react"
 import { useEffect } from "react"
+
 export default function MyApp() {
 	useEffect(() => {
 		;(async function () {
 			const cal = await getCalApi({
-				embedLibUrl: "https://calendarize.io/embed/embed.js",
+				embedJsUrl: "https://calendarize.io/embed/embed.js",
 			})
 			cal("ui", {
 				styles: { branding: { brandColor: "#000000" } },
@@ -13,6 +14,7 @@ export default function MyApp() {
 			})
 		})()
 	}, [])
+
 	return (
 		<Cal
 			calLink="admin/teste"
