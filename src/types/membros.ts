@@ -72,3 +72,23 @@ export interface MembroDataType {
 	pes_foto_url: string
 	emp_logo_url: string
 }
+
+export interface PessoaDataType {
+	emp_id: string;
+	originador_id: string;
+	cpf: string;
+	nome_completo: string;
+	nome_certificado: string;
+	nome_cracha: string;
+	data_nascimento: string;
+	sexo: string;
+	conjuge_socio: boolean;
+	chocolate_preferido: string;
+	cep: string;
+	telefone: string;
+	email: string;
+	cargo: string;
+	perfil: string;
+	departamento: string;
+	administrador: boolean;
+}
