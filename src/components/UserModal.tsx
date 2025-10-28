@@ -22,6 +22,25 @@ import { useEffect, useState } from "react";
 import { PessoaDataType } from "@/types/membros";
 import { createUser, updateUser } from "@/services/membrosService";
 
+const validateCPF = (cpf: string) => {
+  cpf = cpf.replace(/[^\d]+/g, "");
+  if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+  let sum = 0;
+  let remainder;
+  for (let i = 1; i <= 9; i++)
+    sum += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+  remainder = (sum * 10) % 11;
+  if (remainder === 10 || remainder === 11) remainder = 0;
+  if (remainder !== parseInt(cpf.substring(9, 10))) return false;
+  sum = 0;
+  for (let i = 1; i <= 10; i++)
+    sum += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+  remainder = (sum * 10) % 11;
+  if (remainder === 10 || remainder === 11) remainder = 0;
+  if (remainder !== parseInt(cpf.substring(10, 11))) return false;
+  return true;
+};
+
 export function UserModal({
   user,
   onClose,
@@ -32,30 +51,42 @@ export function UserModal({
   onSave: () => void;
 }) {
   const isEditing = user !== undefined;
-  const [formData, setFormData] = useState<PessoaDataType>(
-    user || {
-      emp_id: "",
-      originador_id: "",
-      cpf: "",
-      nome_completo: "",
-      nome_certificado: "",
-      nome_cracha: "",
-      data_nascimento: "",
-      sexo: "",
-      conjuge_socio: false,
-      chocolate_preferido: "",
-      cep: "",
-      telefone: "",
-      email: "",
-      cargo: "",
-      perfil: "",
-      departamento: "",
-      administrador: false
+  const [formData, setFormData] = useState<PessoaDataType>({
+    emp_id: "",
+    originador_id: "",
+    cpf: "",
+    nome_completo: "",
+    nome_certificado: "",
+    nome_cracha: "",
+    data_nascimento: "",
+    sexo: "",
+    conjuge_socio: false,
+    chocolate_preferido: "",
+    cep: "",
+    telefone: "",
+    email: "",
+    cargo: "",
+    perfil: "",
+    departamento: "",
+    administrador: false,
+  });
+  const [cpfError, setCpfError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      setFormData(user);
     }
-  );
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
+    if (id === "cpf") {
+      if (value.replace(/[^\d]+/g, "").length === 11 && !validateCPF(value)) {
+        setCpfError("CPF inválido");
+      } else {
+        setCpfError(null);
+      }
+    }
     setFormData({ ...formData, [id]: value });
   };
 
@@ -68,6 +99,7 @@ export function UserModal({
   };
 
   const handleSubmit = async () => {
+    if (cpfError) return;
     try {
       if (isEditing) {
         await updateUser(formData);
@@ -83,38 +115,51 @@ export function UserModal({
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[600px] overflow-auto">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Editar Usuário" : "Cadastrar Usuário"}</DialogTitle>
+          <DialogTitle>
+            {isEditing ? "Editar Usuário" : "Cadastrar Usuário"}
+          </DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="pes_email">Email</Label>
-              <Input id="pes_email" value={formData.email} onChange={handleChange} />
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" value={formData.email} onChange={handleChange} />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="pes_cpf">CPF</Label>
-              <Input id="pes_cpf" value={formData.cpf} onChange={handleChange} />
+              <Label htmlFor="cpf">CPF</Label>
+              <InputMask
+                mask="999.999.999-99"
+                value={formData.cpf}
+                onChange={handleChange}
+              >
+                {(inputProps) => <Input id="cpf" {...inputProps} />}
+              </InputMask>
+              {cpfError && <p className="text-red-500 text-xs">{cpfError}</p>}
             </div>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="pes_nome">Nome Completo</Label>
-            <Input id="pes_nome" value={formData.nome_completo} onChange={handleChange} />
+            <Label htmlFor="nome_completo">Nome Completo</Label>
+            <Input
+              id="nome_completo"
+              value={formData.nome_completo}
+              onChange={handleChange}
+            />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="pes_nome_certificado">Nome Certificado</Label>
+              <Label htmlFor="nome_certificado">Nome Certificado</Label>
               <Input
-                id="pes_nome_certificado"
+                id="nome_certificado"
                 value={formData.nome_certificado}
                 onChange={handleChange}
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="pes_nome_cracha">Nome Crachá</Label>
+              <Label htmlFor="nome_cracha">Nome Crachá</Label>
               <Input
-                id="pes_nome_cracha"
+                id="nome_cracha"
                 value={formData.nome_cracha}
                 onChange={handleChange}
               />
@@ -123,17 +168,32 @@ export function UserModal({
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
               <Label htmlFor="cep">CEP</Label>
-              <Input id="cep" />
+              <InputMask
+                mask="99999-999"
+                value={formData.cep}
+                onChange={handleChange}
+              >
+                {(inputProps) => <Input id="cep" {...inputProps} />}
+              </InputMask>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="phone">Telefone</Label>
-              <Input id="phone" />
+              <Label htmlFor="telefone">Telefone</Label>
+              <InputMask
+                mask="(99) 99999-9999"
+                value={formData.telefone}
+                onChange={handleChange}
+              >
+                {(inputProps) => <Input id="telefone" {...inputProps} />}
+              </InputMask>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="gender">Sexo</Label>
-              <Select onValueChange={(value) => handleSelectChange("gender", value)}>
+              <Label htmlFor="sexo">Sexo</Label>
+              <Select
+                value={formData.sexo}
+                onValueChange={(value) => handleSelectChange("sexo", value)}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione o sexo" />
                 </SelectTrigger>
@@ -144,15 +204,23 @@ export function UserModal({
               </Select>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="birthDate">Data de Nascimento</Label>
-              <InputMask mask="99/99/9999">
-                {(inputProps) => <Input {...inputProps} id="birthDate" />}
+              <Label htmlFor="data_nascimento">Data de Nascimento</Label>
+              <InputMask
+                mask="99/99/9999"
+                value={formData.data_nascimento}
+                onChange={handleChange}
+              >
+                {(inputProps) => <Input id="data_nascimento" {...inputProps} />}
               </InputMask>
             </div>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="favoriteChocolate">Chocolate Preferido</Label>
-            <Input id="favoriteChocolate" />
+            <Label htmlFor="chocolate_preferido">Chocolate Preferido</Label>
+            <Input
+              id="chocolate_preferido"
+              value={formData.chocolate_preferido}
+              onChange={handleChange}
+            />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
@@ -161,7 +229,11 @@ export function UserModal({
             </div>
             <div className="grid gap-2">
               <Label htmlFor="departamento">Departamento</Label>
-              <Input id="departamento" value={formData.departamento} onChange={handleChange} />
+              <Input
+                id="departamento"
+                value={formData.departamento}
+                onChange={handleChange}
+              />
             </div>
           </div>
           <div className="grid gap-2">
@@ -182,11 +254,13 @@ export function UserModal({
           </div>
           <div className="flex items-center space-x-2">
             <Switch
-              id="admin"
+              id="administrador"
               checked={formData.administrador}
-              onCheckedChange={(checked) => handleSwitchChange("admin", checked)}
+              onCheckedChange={(checked) =>
+                handleSwitchChange("administrador", checked)
+              }
             />
-            <Label htmlFor="admin">Administrador</Label>
+            <Label htmlFor="administrador">Administrador</Label>
           </div>
         </div>
         <DialogFooter>
@@ -195,7 +269,7 @@ export function UserModal({
               Cancelar
             </Button>
           </DialogClose>
-          <Button type="submit" onClick={handleSubmit}>
+          <Button type="submit" onClick={handleSubmit} disabled={!!cpfError}>
             {isEditing ? "Salvar Alterações" : "Cadastrar"}
           </Button>
         </DialogFooter>
