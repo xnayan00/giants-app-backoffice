@@ -22,7 +22,8 @@ export default function BackofficeUsuarios() {
   const [selectedUser, setSelectedUser] = useState<number>();
   const { showLoading, hideLoading } = useLoading();
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (user?: PessoaDataType) => {    
+    setSelectedUser(user.pes_id);
     setIsModalOpen(true);
   };
 
@@ -77,7 +78,7 @@ export default function BackofficeUsuarios() {
             <i className="fi fi-ts-upload"></i>
             <span className="ml-2">Cadastro em Lote</span>
           </Button>
-          <Button onClick={() => handleOpenModal()}>
+          <Button onClick={() => setIsModalOpen(true)}>
             <i className="fi fi-ts-plus"></i>
             <span className="ml-2">Novo Usuário</span>
           </Button>
