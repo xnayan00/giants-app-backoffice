@@ -22,6 +22,7 @@ export interface PessoaDataType {
 	admin: boolean
 	pes_tem_foto: number
 	pes_foto_url: string
+	status_origem: "presença autorizada" | "presença não autorizada" | "pendente de aprovação"
 }
 
 export interface CompanyLogsDataType {

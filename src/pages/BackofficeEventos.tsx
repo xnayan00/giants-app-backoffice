@@ -1,12 +1,12 @@
-import { Evento, EventoCard } from "@/components/EventoCard"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { getCalendarioAction } from "@/services/eventsService"
 import { EventoDataType } from "@/types/events"
 import { useEffect, useState } from "react"
 import patternBg from "@/assets/pattern-bg.png"
-import { isFuture, isPast, isThisMonth, isThisWeek } from "date-fns"
+import { isFuture, isPast } from "date-fns"
 import { useLoading } from "@/hooks/useLoading"
+import { Link } from "react-router-dom"
 
 export default function BackofficeEventos() {
 	const [eventos, setEventos] = useState<EventoDataType[]>([])
@@ -173,6 +173,7 @@ export default function BackofficeEventos() {
 							total > 0 ? ((autorizados + recusados) / total) * 100 : 0
 
 						return (
+							<Link to={`/backoffice/eventos/${evento.origem}/${evento.id}/inscricoes`}>
 							<div
 								key={evento.id}
 								className={`bg-surface border border-border rounded-lg p-4 space-y-3`}
@@ -253,10 +254,11 @@ export default function BackofficeEventos() {
 										size="sm"
 										className="w-full"
 									>
-										Inscrever-se
+										Ver inscrições
 									</Button>
 								</div>
 							</div>
+							</Link>
 						)
 					})}
 				</div>

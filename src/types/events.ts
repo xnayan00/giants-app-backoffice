@@ -1,6 +1,13 @@
-interface PessoaInscrita {
+export interface PessoaInscrita {
 	pes_id: number
 	foto_url: string
+}
+
+export interface Inscricao {
+  id: number;
+  nome: string;
+  email: string;
+  status: "Pendente" | "Aprovado" | "Reprovado";
 }
 
 export interface EventoDataType {

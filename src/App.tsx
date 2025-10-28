@@ -18,6 +18,7 @@ import BackofficeLogin from "./pages/BackofficeLogin"
 import BackofficeDashboard from "./pages/BackofficeDashboard"
 import BackofficeUsuarios from "./pages/BackofficeUsuarios"
 import BackofficeEventos from "./pages/BackofficeEventos"
+import BackofficeEventoInscricoes from "./pages/BackofficeEventoInscricoes"
 import BackofficeLogs from "./pages/BackofficeLogs"
 import NotFound from "./pages/NotFound"
 import { BackofficeLayout } from "./components/BackofficeLayout"
@@ -150,6 +151,14 @@ const App = () => (
 							element={
 								<BackofficeLayout>
 									<BackofficeEventos />
+								</BackofficeLayout>
+							}
+						/>
+						<Route
+							path="/backoffice/eventos/:origem/:id/inscricoes"
+							element={
+								<BackofficeLayout>
+									<BackofficeEventoInscricoes />
 								</BackofficeLayout>
 							}
 						/>

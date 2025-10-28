@@ -200,11 +200,6 @@
 		@apply bg-background text-foreground font-sans antialiased;
 	}
 
-	h1,
-	h2 {
-		@apply font-display;
-	}
-
 	::placeholder {
 		@apply text-muted !important;
 	}
