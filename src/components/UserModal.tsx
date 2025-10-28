@@ -21,6 +21,7 @@ import InputMask from "react-input-mask";
 import { useEffect, useState } from "react";
 import { PessoaDataType } from "@/types/membros";
 import { createUser, updateUser } from "@/services/membrosService";
+import { getPessoas } from "@/services/companyService";
 
 const validateCPF = (cpf: string) => {
   cpf = cpf.replace(/[^\d]+/g, "");
@@ -42,15 +43,15 @@ const validateCPF = (cpf: string) => {
 };
 
 export function UserModal({
-  user,
+  userId,
   onClose,
   onSave,
 }: {
-  user?: PessoaDataType;
+  userId?: number;
   onClose: () => void;
   onSave: () => void;
 }) {
-  const isEditing = user !== undefined;
+  const isEditing = userId !== undefined;
   const [formData, setFormData] = useState<PessoaDataType>({
     emp_id: "",
     originador_id: "",
@@ -73,10 +74,20 @@ export function UserModal({
   const [cpfError, setCpfError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (user) {
-      setFormData(user);
+    console.log("USERID: ", userId);
+    
+    if (userId) {
+      getPessoas(198, { pes_id: userId.toString() })
+        .then(({ data }) => {
+          if (data.data.length > 0) {
+            setFormData(data.data[0]);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
-  }, [user]);
+  }, [userId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -165,63 +176,69 @@ export function UserModal({
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          {!isEditing && (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="cep">CEP</Label>
+                <InputMask
+                  mask="99999-999"
+                  value={formData.cep}
+                  onChange={handleChange}
+                >
+                  {(inputProps) => <Input id="cep" {...inputProps} />}
+                </InputMask>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="telefone">Telefone</Label>
+                <InputMask
+                  mask="(99) 99999-9999"
+                  value={formData.telefone}
+                  onChange={handleChange}
+                >
+                  {(inputProps) => <Input id="telefone" {...inputProps} />}
+                </InputMask>
+              </div>
+            </div>
+          )}
+          {!isEditing && (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="sexo">Sexo</Label>
+                <Select
+                  value={formData.sexo}
+                  onValueChange={(value) => handleSelectChange("sexo", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o sexo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="masculino">Masculino</SelectItem>
+                    <SelectItem value="feminino">Feminino</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="data_nascimento">Data de Nascimento</Label>
+                <InputMask
+                  mask="99/99/9999"
+                  value={formData.data_nascimento}
+                  onChange={handleChange}
+                >
+                  {(inputProps) => <Input id="data_nascimento" {...inputProps} />}
+                </InputMask>
+              </div>
+            </div>
+          )}
+          {!isEditing && (
             <div className="grid gap-2">
-              <Label htmlFor="cep">CEP</Label>
-              <InputMask
-                mask="99999-999"
-                value={formData.cep}
+              <Label htmlFor="chocolate_preferido">Chocolate Preferido</Label>
+              <Input
+                id="chocolate_preferido"
+                value={formData.chocolate_preferido}
                 onChange={handleChange}
-              >
-                {(inputProps) => <Input id="cep" {...inputProps} />}
-              </InputMask>
+              />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="telefone">Telefone</Label>
-              <InputMask
-                mask="(99) 99999-9999"
-                value={formData.telefone}
-                onChange={handleChange}
-              >
-                {(inputProps) => <Input id="telefone" {...inputProps} />}
-              </InputMask>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="sexo">Sexo</Label>
-              <Select
-                value={formData.sexo}
-                onValueChange={(value) => handleSelectChange("sexo", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o sexo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="masculino">Masculino</SelectItem>
-                  <SelectItem value="feminino">Feminino</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="data_nascimento">Data de Nascimento</Label>
-              <InputMask
-                mask="99/99/9999"
-                value={formData.data_nascimento}
-                onChange={handleChange}
-              >
-                {(inputProps) => <Input id="data_nascimento" {...inputProps} />}
-              </InputMask>
-            </div>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="chocolate_preferido">Chocolate Preferido</Label>
-            <Input
-              id="chocolate_preferido"
-              value={formData.chocolate_preferido}
-              onChange={handleChange}
-            />
-          </div>
+          )}
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
               <Label htmlFor="cargo">Cargo</Label>

@@ -13,19 +13,20 @@ import { DataTable } from "@/components/reusable/DataTable";
 import { columns as createColumns } from "./BackofficeUsuariosColumns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UserModal } from "@/components/UserModal";
+import { useLoading } from "@/hooks/useLoading"
 
 export default function BackofficeUsuarios() {
   const [users, setUsers] = useState<PessoaDataType[]>([]);
-  const [loading, setLoading] = useState(true);
   const [filteredUsers, setFilteredUsers] = useState<PessoaDataType[]>([]);
   const [filter, setFilter] = useState("todos");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<PessoaDataType | undefined>(
-    undefined
-  );
+  const [selectedUser, setSelectedUser] = useState<number>();
+  const { showLoading, hideLoading } = useLoading();
 
   const handleOpenModal = (user?: PessoaDataType) => {
-    setSelectedUser(user);
+    console.log("USER: ", user);
+    
+    setSelectedUser(user.pes_id);
     setIsModalOpen(true);
   };
 
@@ -35,7 +36,7 @@ export default function BackofficeUsuarios() {
   };
 
   const fetchUsers = () => {
-    setLoading(true);
+    showLoading();
     getPessoas(198)
       .then(({ data }) => {
         setUsers(data.data);
@@ -44,7 +45,7 @@ export default function BackofficeUsuarios() {
         console.error(error);
       })
       .finally(() => {
-        setLoading(false);
+        hideLoading();
       });
   };
 
@@ -111,21 +112,11 @@ export default function BackofficeUsuarios() {
             Lista de todos os usuários cadastrados no programa
           </p>
         </div>
-
-        {loading ? (
-          <div className="p-6 space-y-4">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-          </div>
-        ) : (
           <DataTable columns={columns} data={filteredUsers} />
-        )}
       </div>
       {isModalOpen && (
         <UserModal
-          user={selectedUser}
+          userId={selectedUser}
           onClose={handleCloseModal}
           onSave={fetchUsers}
         />

@@ -12,13 +12,16 @@ import PessoasEmpresaChart from "@/components/PessoasEmpresaChart"
 import ParticipacoesEventosChart from "@/components/ParticipacoesEventosChart"
 import ParticipacoesPorTipoChart from "@/components/ParticipacoesPorTipoChart"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useLoading } from "@/hooks/useLoading"
 
 export default function BackofficeDashboard() {
 	const [data, setData] = useState<DashboardResponseList | null>(null)
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
+	const { showLoading, hideLoading } = useLoading()
 
 	useEffect(() => {
+		showLoading()
 		getDashboard(198)
 			.then(({ data }) => {
 				setData(data)
@@ -28,6 +31,8 @@ export default function BackofficeDashboard() {
 				setError("Erro ao carregar os dados do dashboard.")
 				setLoading(false)
 				console.error(error)
+			}).finally(() => {
+				hideLoading()
 			})
 	}, [])
 

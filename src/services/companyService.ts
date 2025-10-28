@@ -1,6 +1,7 @@
 import {
 	CompanyLogsDataType,
 	EmpresaConsumo,
+	FetchPessoaEmpresaParamsDataType,
 	PessoaDataType,
 } from "@/types/company"
 import api from "../http/api"
@@ -15,6 +16,11 @@ export const getLogs = async (id_empresa: number) => {
 
 export const getPessoas = async (
 	id_empresa: number,
-): Promise<{ data: { data: PessoaDataType[] } }> => {
-	return api.get(`empresas/${id_empresa}/pessoas`)
+	params?: FetchPessoaEmpresaParamsDataType
+): Promise<{ data: { data: PessoaDataType[], params?: FetchPessoaEmpresaParamsDataType} }> => {
+	const queryString = new URLSearchParams(
+		params as Record<string, string>
+	).toString();
+
+	return api.get(`empresas/${id_empresa}/pessoas${queryString ? `?${queryString}` : ""}`)
 }

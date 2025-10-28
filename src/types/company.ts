@@ -35,3 +35,10 @@ export interface CompanyLogsDataType {
 	acao: string
 	detalhes: string
 }
+
+export interface FetchPessoaEmpresaParamsDataType {
+	status_aprovacao?: string
+	origem?: string
+	id_origem?: string
+	pes_id?: string
+}

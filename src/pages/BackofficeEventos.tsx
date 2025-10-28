@@ -6,10 +6,13 @@ import { EventoDataType } from "@/types/events"
 import { useEffect, useState } from "react"
 import patternBg from "@/assets/pattern-bg.png"
 import { isFuture, isPast, isThisMonth, isThisWeek } from "date-fns"
+import { useLoading } from "@/hooks/useLoading"
 
 export default function BackofficeEventos() {
 	const [eventos, setEventos] = useState<EventoDataType[]>([])
 	const [filteredEventos, setFilteredEventos] = useState<EventoDataType[]>([])
+	const { showLoading, hideLoading } = useLoading()
+
 
 	const [search, setSearch] = useState("")
 	const [inscriptionFilter, setInscriptionFilter] = useState("todos")
@@ -17,12 +20,15 @@ export default function BackofficeEventos() {
 	const [periodFilter, setPeriodFilter] = useState("todos")
 
 	useEffect(() => {
+		showLoading()
 		getCalendarioAction({ emp_id: 198 })
 			.then(({ data }) => {
 				setEventos(data.data)
 			})
 			.catch((error) => {
 				console.log(error)
+			}).finally(() => {
+				hideLoading()
 			})
 	}, [])
 

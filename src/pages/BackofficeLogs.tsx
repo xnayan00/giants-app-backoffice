@@ -9,6 +9,7 @@ import { getLogs } from "@/services/companyService"
 import { CompanyLogsDataType } from "@/types/company"
 import { formatDate } from "@/utils/formatDate"
 import { useEffect, useState } from "react"
+import { useLoading } from "@/hooks/useLoading"
 
 interface Log {
 	id: number
@@ -22,14 +23,19 @@ export default function BackofficeLogs() {
 	const [logs, setLogs] = useState<CompanyLogsDataType[]>([])
 	const [filteredLogs, setFilteredLogs] = useState<CompanyLogsDataType[]>([])
 	const [filter, setFilter] = useState("todos")
+	const { showLoading, hideLoading } = useLoading()
+
 
 	useEffect(() => {
+		showLoading()
 		getLogs(198)
 			.then(({ data }) => {
 				setLogs(data)
 			})
 			.catch((error) => {
 				console.error(error)
+			}).finally(() => {
+				hideLoading()
 			})
 	}, [])
 
