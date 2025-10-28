@@ -20,6 +20,7 @@ import { Switch } from "./ui/switch";
 import InputMask from "react-input-mask";
 import { useEffect, useState } from "react";
 import { PessoaDataType } from "@/types/membros";
+import { PessoaDataType as CompanyPessoa } from "@/types/company";
 import { createUser, updateUser } from "@/services/membrosService";
 import { getPessoas } from "@/services/companyService";
 
@@ -41,6 +42,33 @@ const validateCPF = (cpf: string) => {
   if (remainder !== parseInt(cpf.substring(10, 11))) return false;
   return true;
 };
+
+function parseApiResponse(apiData: CompanyPessoa): PessoaDataType {  
+  const novaPessoa: PessoaDataType = {
+    emp_id: String(apiData.pes_id),
+    cpf: apiData.pes_cpf,
+    nome_completo: apiData.pes_nome.trim(),
+    nome_certificado: apiData.pes_nome_certificado.trim(),
+    nome_cracha: apiData.pes_nome_cracha.trim(),
+    email: apiData.pes_email,
+    cargo: apiData.cargo,
+    perfil: apiData.perfil,
+    departamento: apiData.departamento,
+    administrador: apiData.admin,
+
+    // --- Campos Faltantes
+    originador_id: String(apiData.pes_id), 
+    
+    data_nascimento: '',
+    sexo: '',
+    conjuge_socio: false,
+    chocolate_preferido: '',
+    cep: '',
+    telefone: '',
+  };
+
+  return novaPessoa;
+}
 
 export function UserModal({
   userId,
@@ -80,7 +108,9 @@ export function UserModal({
       getPessoas(198, { pes_id: userId.toString() })
         .then(({ data }) => {
           if (data.data.length > 0) {
-            setFormData(data.data[0]);
+            const parsedData = parseApiResponse(data.data[0]);
+
+            setFormData(parsedData);
           }
         })
         .catch((error) => {
@@ -263,9 +293,9 @@ export function UserModal({
                 <SelectValue placeholder="Selecione o perfil" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="lideranca">Liderança</SelectItem>
-                <SelectItem value="colaborador">Colaborador</SelectItem>
-                <SelectItem value="membro">Membro</SelectItem>
+                <SelectItem value="Lideranca">Liderança</SelectItem>
+                <SelectItem value="Colaborador">Colaborador</SelectItem>
+                <SelectItem value="Membro">Membro</SelectItem>
               </SelectContent>
             </Select>
           </div>

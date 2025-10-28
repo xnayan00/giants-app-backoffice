@@ -56,8 +56,8 @@ export default function BackofficeUsuarios() {
   useEffect(() => {
     const filtered = users.filter((user) => {
       if (filter === "todos") return true;
-      if (filter === "ativos") return user.ativo;
-      if (filter === "inativos") return !user.ativo;
+      if (filter === "ativos") return user.pes_status;
+      if (filter === "inativos") return !user.pes_status;
       return true;
     });
     setFilteredUsers(filtered);
