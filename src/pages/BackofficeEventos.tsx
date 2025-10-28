@@ -16,7 +16,7 @@ export default function BackofficeEventos() {
 
 	const [search, setSearch] = useState("")
 	const [inscriptionFilter, setInscriptionFilter] = useState("todos")
-	const [statusFilter, setStatusFilter] = useState("proximos")
+	const [statusFilter, setStatusFilter] = useState("todos")
 	const [periodFilter, setPeriodFilter] = useState("todos")
 
 	useEffect(() => {

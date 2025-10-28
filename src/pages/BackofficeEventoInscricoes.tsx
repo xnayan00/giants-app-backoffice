@@ -24,7 +24,7 @@ export default function BackofficeEventoInscricoes() {
       .finally(() => {
         hideLoading();
       });
-  }, [id, showLoading, hideLoading]);
+  }, []);
 
   useEffect(() => {
     fetchInscricoes();
@@ -61,16 +61,16 @@ export default function BackofficeEventoInscricoes() {
           <TabsTrigger value="presença não autorizada">Reprovados</TabsTrigger>
         </TabsList>
         <TabsContent value="todos">
-          <DataTable columns={columns(fetchInscricoes)} data={inscricoes} />
+          <DataTable columns={columns(fetchInscricoes)} data={filteredInscricoes} />
         </TabsContent>
-        <TabsContent value="pendente">
-          <DataTable columns={columns(fetchInscricoes)} data={inscricoes} />
+        <TabsContent value="pendente de aprovação">
+          <DataTable columns={columns(fetchInscricoes)} data={filteredInscricoes} />
         </TabsContent>
-        <TabsContent value="aprovado">
-          <DataTable columns={columns(fetchInscricoes)} data={inscricoes} />
+        <TabsContent value="presença autorizada">
+          <DataTable columns={columns(fetchInscricoes)} data={filteredInscricoes} />
         </TabsContent>
-        <TabsContent value="reprovado">
-          <DataTable columns={columns(fetchInscricoes)} data={inscricoes} />
+        <TabsContent value="presença não autorizada">
+          <DataTable columns={columns(fetchInscricoes)} data={filteredInscricoes} />
         </TabsContent>
       </Tabs>
     </div>

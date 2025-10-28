@@ -1,12 +1,6 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -14,6 +8,7 @@ import {
 	reproveInscricao,
 } from '@/services/eventsService'
 import { PessoaDataType } from '@/types/company'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 const getStatus = (status: string) => {
 	switch (status) {
@@ -89,73 +84,50 @@ export const columns = (
 	{
 		id: 'actions',
 		cell: ({ row }) => (
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button
-						variant="ghost"
-						size="sm"
-					>
-						<i className="fi fi-ts-circle-ellipsis-vertical text-lg flex items-center"></i>
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent
-					align="end"
-					className="bg-surface border-border"
-				>
-					{row.original.status_origem === 'pendente de aprovação' && (
-						<>
-							<DropdownMenuItem
-								className="cursor-pointer hover:bg-surface-hover text-green-500"
-								onClick={async () => {
-									await approveInscricao(row.original.pes_id)
-									refetch()
-								}}
-							>
-								<i className="fi fi-ts-check-circle mr-2"></i>
-								Aprovar
-							</DropdownMenuItem>
-							<DropdownMenuItem
-								className="cursor-pointer hover:bg-surface-hover text-red-500"
-								onClick={async () => {
-									await reproveInscricao(row.original.pes_id)
-									refetch()
-								}}
-							>
-								<i className="fi fi-ts-cross-circle mr-2"></i>
-								Reprovar
-							</DropdownMenuItem>
-						</>
-					)}
-					{row.original.status_origem === 'pendente de aprovação' && (
-						<>
-							<DropdownMenuItem
-								className="cursor-pointer hover:bg-surface-hover text-red-500"
-								onClick={async () => {
-									await reproveInscricao(row.original.pes_id)
-									refetch()
-								}}
-							>
-								<i className="fi fi-ts-cross-circle mr-2"></i>
-								Reprovar
-							</DropdownMenuItem>
-						</>
-					)}
-					{row.original.status_origem === 'pendente de aprovação' && (
-						<>
-							<DropdownMenuItem
-								className="cursor-pointer hover:bg-surface-hover text-green-500"
-								onClick={async () => {
-									await approveInscricao(row.original.id)
-									refetch()
-								}}
-							>
-								<i className="fi fi-ts-check-circle mr-2"></i>
-								Aprovar
-							</DropdownMenuItem>
-						</>
-					)}
-				</DropdownMenuContent>
-			</DropdownMenu>
+			<div>
+				{row.original.status_origem === 'pendente de aprovação' && (
+					<div className="flex items-center gap-2">
+						<TooltipProvider>
+							<Tooltip delayDuration={0}>
+								<TooltipTrigger asChild>
+									<Button
+										variant="ghost"
+										size="sm"
+										onClick={async () => {
+											await approveInscricao(row.original.pes_id)
+											refetch()
+										}}
+									>
+										<i className="fi fi-ts-check-circle text-lg text-green-500 flex items-center justify-center"></i>
+									</Button>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>Aprovar</p>
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+						<TooltipProvider>
+							<Tooltip delayDuration={0}>
+								<TooltipTrigger asChild>
+									<Button
+										variant="ghost"
+										size="sm"
+										onClick={async () => {
+											await reproveInscricao(row.original.pes_id)
+											refetch()
+										}}
+									>
+										<i className="fi fi-ts-circle-xmark text-lg text-red-500 flex items-center justify-center"></i>
+									</Button>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>Reprovar</p>
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					</div>
+				)}
+			</div>
 		),
 	},
 ]
