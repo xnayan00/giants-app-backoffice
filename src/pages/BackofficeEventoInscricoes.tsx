@@ -6,6 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLoading } from "@/hooks/useLoading";
 import { getPessoas } from "@/services/companyService";
 import { PessoaDataType } from "@/types/company";
+import {
+	approveInscricao,
+	reproveInscricao,
+} from "@/services/eventsService";
+import { Button } from "@/components/ui/button";
 
 export default function BackofficeEventoInscricoes() {
   const { id, origem } = useParams<{ id: string, origem: string}>();
@@ -13,6 +18,7 @@ export default function BackofficeEventoInscricoes() {
   const [filteredInscricoes, setFilteredInscricoes] = useState<PessoaDataType[]>([]);
   const [activeTab, setActiveTab] = useState("todos");
   const { showLoading, hideLoading } = useLoading();
+  const [rowSelection, setRowSelection] = useState({});
 
   const fetchInscricoes = useCallback(() => {
     showLoading();
@@ -42,6 +48,45 @@ export default function BackofficeEventoInscricoes() {
     }
   }, [inscricoes, activeTab]);
 
+  const [table, dataTableComponent] = DataTable({
+    columns: columns(fetchInscricoes),
+    data: filteredInscricoes,
+    rowSelection,
+    setRowSelection,
+  });
+
+  const handleBulkApprove = async () => {
+    showLoading();
+    const selectedRows = table.getFilteredSelectedRowModel().rows;
+    try {
+      await Promise.all(
+        selectedRows.map((row) => approveInscricao(row.original.pes_id))
+      );
+      fetchInscricoes();
+      table.resetRowSelection();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      hideLoading();
+    }
+  };
+
+  const handleBulkReprove = async () => {
+    showLoading();
+    const selectedRows = table.getFilteredSelectedRowModel().rows;
+    try {
+      await Promise.all(
+        selectedRows.map((row) => reproveInscricao(row.original.pes_id))
+      );
+      fetchInscricoes();
+      table.resetRowSelection();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      hideLoading();
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -54,23 +99,32 @@ export default function BackofficeEventoInscricoes() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="todos">Todos</TabsTrigger>
-          <TabsTrigger value="pendente de aprovação">Pendentes</TabsTrigger>
-          <TabsTrigger value="presença autorizada">Aprovados</TabsTrigger>
-          <TabsTrigger value="presença não autorizada">Reprovados</TabsTrigger>
-        </TabsList>
+        <div className=" flex items-center justify-between">
+          <TabsList>
+            <TabsTrigger value="todos">Todos</TabsTrigger>
+            <TabsTrigger value="pendente de aprovação">Pendentes</TabsTrigger>
+            <TabsTrigger value="presença autorizada">Aprovados</TabsTrigger>
+            <TabsTrigger value="presença não autorizada">Reprovados</TabsTrigger>
+          </TabsList>
+          
+          {Object.keys(rowSelection).length > 0 && (activeTab === "todos" || activeTab === "pendente de aprovação") && table.getFilteredSelectedRowModel().rows.every(i => i.status_origem === "pendente de aprovação") && (
+            <div className="flex gap-2 mb-4">
+              <Button onClick={handleBulkReprove} disabled={Object.keys(rowSelection).length === 0} variant="destructive">Reprovar {Object.keys(rowSelection).length} selecionados</Button>
+              <Button onClick={handleBulkApprove} disabled={Object.keys(rowSelection).length === 0}>Aprovar {Object.keys(rowSelection).length} selecionados</Button>
+            </div>
+          )}
+        </div>
         <TabsContent value="todos">
-          <DataTable columns={columns(fetchInscricoes)} data={filteredInscricoes} />
+            {dataTableComponent}
         </TabsContent>
         <TabsContent value="pendente de aprovação">
-          <DataTable columns={columns(fetchInscricoes)} data={filteredInscricoes} />
+            {dataTableComponent}
         </TabsContent>
         <TabsContent value="presença autorizada">
-          <DataTable columns={columns(fetchInscricoes)} data={filteredInscricoes} />
+            {dataTableComponent}
         </TabsContent>
         <TabsContent value="presença não autorizada">
-          <DataTable columns={columns(fetchInscricoes)} data={filteredInscricoes} />
+            {dataTableComponent}
         </TabsContent>
       </Tabs>
     </div>

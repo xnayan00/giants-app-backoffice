@@ -25,11 +25,15 @@ import {
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[]
 	data: TData[]
+	rowSelection: {}
+	setRowSelection: React.Dispatch<React.SetStateAction<{}>>
 }
 
 export function DataTable<TData, TValue>({
 	columns,
 	data,
+	rowSelection,
+	setRowSelection,
 }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = React.useState<SortingState>([])
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -37,7 +41,6 @@ export function DataTable<TData, TValue>({
 	)
 	const [columnVisibility, setColumnVisibility] =
 		React.useState<VisibilityState>({})
-	const [rowSelection, setRowSelection] = React.useState({})
 
 	const table = useReactTable({
 		data,
@@ -58,7 +61,8 @@ export function DataTable<TData, TValue>({
 		},
 	})
 
-	return (
+	return [
+		table,
 		<div className="w-full">
 			<div className="rounded-md border">
 				<Table>
@@ -134,6 +138,6 @@ export function DataTable<TData, TValue>({
 					</Button>
 				</div>
 			</div>
-		</div>
-	)
+		</div>,
+	]
 }
