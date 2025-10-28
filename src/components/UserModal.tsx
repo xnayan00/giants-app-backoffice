@@ -101,9 +101,7 @@ export function UserModal({
   });
   const [cpfError, setCpfError] = useState<string | null>(null);
 
-  useEffect(() => {
-    console.log("USERID: ", userId);
-    
+  useEffect(() => {    
     if (userId) {
       getPessoas(198, { pes_id: userId.toString() })
         .then(({ data }) => {

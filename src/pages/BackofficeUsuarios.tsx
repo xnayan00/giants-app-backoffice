@@ -11,7 +11,6 @@ import { getPessoas } from "@/services/companyService";
 import { PessoaDataType } from "@/types/company";
 import { DataTable } from "@/components/reusable/DataTable";
 import { columns as createColumns } from "./BackofficeUsuariosColumns";
-import { Skeleton } from "@/components/ui/skeleton";
 import { UserModal } from "@/components/UserModal";
 import { useLoading } from "@/hooks/useLoading"
 
@@ -23,10 +22,7 @@ export default function BackofficeUsuarios() {
   const [selectedUser, setSelectedUser] = useState<number>();
   const { showLoading, hideLoading } = useLoading();
 
-  const handleOpenModal = (user?: PessoaDataType) => {
-    console.log("USER: ", user);
-    
-    setSelectedUser(user.pes_id);
+  const handleOpenModal = () => {
     setIsModalOpen(true);
   };
 
