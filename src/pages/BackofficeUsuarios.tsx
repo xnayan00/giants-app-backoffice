@@ -21,6 +21,7 @@ export default function BackofficeUsuarios() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<number>();
   const { showLoading, hideLoading } = useLoading();
+  const [rowSelection, setRowSelection] = useState({});
 
   const handleOpenModal = (user?: PessoaDataType) => {    
     setSelectedUser(user.pes_id);
@@ -50,6 +51,15 @@ export default function BackofficeUsuarios() {
     fetchUsers();
   }, []);
 
+  const columns = createColumns(handleOpenModal);
+
+  const [table, dataTableComponent] = DataTable({
+      columns: columns,
+      data: filteredUsers,
+      rowSelection,
+      setRowSelection,
+    });
+
   useEffect(() => {
     const filtered = users.filter((user) => {
       if (filter === "todos") return true;
@@ -59,8 +69,6 @@ export default function BackofficeUsuarios() {
     });
     setFilteredUsers(filtered);
   }, [users, filter]);
-
-  const columns = createColumns(handleOpenModal);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -109,7 +117,7 @@ export default function BackofficeUsuarios() {
             Lista de todos os usuários cadastrados no programa
           </p>
         </div>
-          <DataTable columns={columns} data={filteredUsers} />
+          {dataTableComponent}
       </div>
       {isModalOpen && (
         <UserModal

@@ -107,7 +107,7 @@ export default function BackofficeEventoInscricoes() {
             <TabsTrigger value="presença não autorizada">Reprovados</TabsTrigger>
           </TabsList>
           
-          {Object.keys(rowSelection).length > 0 && (activeTab === "todos" || activeTab === "pendente de aprovação") && table.getFilteredSelectedRowModel().rows.every(i => i.status_origem === "pendente de aprovação") && (
+          {Object.keys(rowSelection).length > 0 && ((activeTab === "todos" && table.getFilteredSelectedRowModel().rows.every(row => row.original.status_origem === "pendente de aprovação")) || activeTab === "pendente de aprovação") && (
             <div className="flex gap-2 mb-4">
               <Button onClick={handleBulkReprove} disabled={Object.keys(rowSelection).length === 0} variant="destructive">Reprovar {Object.keys(rowSelection).length} selecionados</Button>
               <Button onClick={handleBulkApprove} disabled={Object.keys(rowSelection).length === 0}>Aprovar {Object.keys(rowSelection).length} selecionados</Button>
